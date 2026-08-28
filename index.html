@@ -74,7 +74,6 @@
         .level-low { background:#fde8e8; color:#b13a3a; }
         .type-badge { display:inline-block; background:#0b1a2e; color:#fff; padding:8px 24px; border-radius:30px; font-size:18px; font-weight:700; margin:12px 0 6px; }
         .type-desc { font-size:15px; color:#2c3e50; margin-top:4px; text-align:center; }
-        /* 后台登录框样式 */
         .admin-login-box { max-width:380px; margin:40px auto; padding:30px 24px; background:#f8fafd; border-radius:20px; text-align:center; }
         .admin-login-box h2 { font-size:20px; margin-bottom:16px; }
         .admin-login-box input { width:100%; padding:12px; border:1.5px solid #dce2ec; border-radius:12px; font-size:16px; margin-bottom:12px; outline:none; }
@@ -93,9 +92,8 @@
     </div>
 
     <script>
-        // ===================== 配置 =====================
-        // 【修改密码】将下面的 'admin123' 改成您想要的后台登录密码
-        const ADMIN_PASSWORD = 'admin123';
+        // ===================== 配置（密码已改为 88192283） =====================
+        const ADMIN_PASSWORD = '88192283';  // ← 后台密码
 
         // ===================== 问卷数据 =====================
         const QUESTIONS = [
@@ -388,7 +386,6 @@
             pageAdminDetail.classList.add('hidden');
             pageAdminLogin.classList.remove('hidden');
 
-            // 检查是否已经登录（sessionStorage 标记）
             if (sessionStorage.getItem('admin_logged_in') === 'true') {
                 pageAdminLogin.classList.add('hidden');
                 showAdminDashboard();
@@ -438,9 +435,7 @@
             renderAdmin();
         }
 
-        // 修改原有的 showAdmin 入口
         window.showAdmin = function() {
-            // 先检查是否已登录
             if (sessionStorage.getItem('admin_logged_in') === 'true') {
                 showAdminDashboard();
             } else {
@@ -565,7 +560,6 @@
 
         // ===================== 初始化 =====================
         if(window.location.search.includes('admin')) {
-            // 显示后台登录页（如果已登录则直接展示）
             showAdminLogin();
         } else {
             renderTest();
@@ -575,9 +569,9 @@
             if(e.key==='ArrowLeft') { if(!pageTest.classList.contains('hidden')) window.prevQuestion&&window.prevQuestion(); }
             else if(e.key==='ArrowRight') { if(!pageTest.classList.contains('hidden')) window.nextQuestion&&window.nextQuestion(); }
         });
-        console.log('🧠 大五人格测试已加载 (含后台密码保护)');
+        console.log('🧠 大五人格测试已加载 (后台密码已改为 88192283)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
-        console.log('🔑 默认密码: 88192283 (可修改代码中的 ADMIN_PASSWORD)');
+        console.log('🔑 当前后台密码: 88192283');
     </script>
 </body>
 </html>
