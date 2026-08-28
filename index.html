@@ -74,6 +74,13 @@
         .level-low { background:#fde8e8; color:#b13a3a; }
         .type-badge { display:inline-block; background:#0b1a2e; color:#fff; padding:8px 24px; border-radius:30px; font-size:18px; font-weight:700; margin:12px 0 6px; }
         .type-desc { font-size:15px; color:#2c3e50; margin-top:4px; text-align:center; }
+        /* 后台登录框样式 */
+        .admin-login-box { max-width:380px; margin:40px auto; padding:30px 24px; background:#f8fafd; border-radius:20px; text-align:center; }
+        .admin-login-box h2 { font-size:20px; margin-bottom:16px; }
+        .admin-login-box input { width:100%; padding:12px; border:1.5px solid #dce2ec; border-radius:12px; font-size:16px; margin-bottom:12px; outline:none; }
+        .admin-login-box input:focus { border-color:#3b7cff; box-shadow:0 0 0 3px rgba(59,124,255,0.12); }
+        .admin-login-box .btn { width:100%; }
+        .admin-login-box .error { color:#b13a3a; font-size:14px; margin-top:8px; }
     </style>
 </head>
 <body>
@@ -82,9 +89,14 @@
         <div id="page-success" class="hidden"></div>
         <div id="page-admin" class="hidden"></div>
         <div id="page-admin-detail" class="hidden"></div>
+        <div id="page-admin-login" class="hidden"></div>
     </div>
 
     <script>
+        // ===================== 配置 =====================
+        // 【修改密码】将下面的 'admin123' 改成您想要的后台登录密码
+        const ADMIN_PASSWORD = 'admin123';
+
         // ===================== 问卷数据 =====================
         const QUESTIONS = [
             { id: 1, text: "我是聚会中的焦点。", dim: "E", dir: "+" },
@@ -236,6 +248,7 @@
         const pageSuccess=document.getElementById('page-success');
         const pageAdmin=document.getElementById('page-admin');
         const pageAdminDetail=document.getElementById('page-admin-detail');
+        const pageAdminLogin=document.getElementById('page-admin-login');
 
         let state={
             started:false, currentQ:0, answers:new Array(50).fill(null),
@@ -248,6 +261,7 @@
             pageSuccess.classList.add('hidden');
             pageAdmin.classList.add('hidden');
             pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.add('hidden');
 
             if(!state.started) {
                 let html=`
@@ -353,6 +367,7 @@
             pageSuccess.classList.remove('hidden');
             pageAdmin.classList.add('hidden');
             pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.add('hidden');
             pageSuccess.innerHTML=`
                 <div class="success-icon">✅</div>
                 <div class="success-title">提交成功</div>
@@ -365,14 +380,74 @@
             renderTest();
         };
 
-        // ===================== 管理后台 =====================
-        window.showAdmin=function(){
+        // ===================== 管理后台（带密码保护） =====================
+        function showAdminLogin() {
             pageTest.classList.add('hidden');
             pageSuccess.classList.add('hidden');
+            pageAdmin.classList.add('hidden');
+            pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.remove('hidden');
+
+            // 检查是否已经登录（sessionStorage 标记）
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                pageAdminLogin.classList.add('hidden');
+                showAdminDashboard();
+                return;
+            }
+
+            let html=`
+                <div class="admin-login-box">
+                    <h2>🔐 管理后台登录</h2>
+                    <p style="font-size:14px; color:#6b7a8d; margin-bottom:16px;">请输入管理密码</p>
+                    <input type="password" id="admin-password-input" placeholder="请输入密码" autofocus>
+                    <button class="btn btn-primary" onclick="verifyAdminPassword()">登录</button>
+                    <div id="admin-login-error" class="error" style="display:none;">密码错误，请重试</div>
+                    <div style="margin-top:16px; font-size:13px; color:#a0b0c0;">
+                        <a href="#" onclick="resetTest()" style="color:#3b7cff; text-decoration:none;">← 返回测试</a>
+                    </div>
+                </div>
+            `;
+            pageAdminLogin.innerHTML=html;
+            // 按回车键提交
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && !pageAdminLogin.classList.contains('hidden')) {
+                    verifyAdminPassword();
+                }
+            });
+        }
+
+        window.verifyAdminPassword = function() {
+            let input = document.getElementById('admin-password-input');
+            let error = document.getElementById('admin-login-error');
+            if (!input) return;
+            if (input.value === ADMIN_PASSWORD) {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                pageAdminLogin.classList.add('hidden');
+                showAdminDashboard();
+            } else {
+                error.style.display = 'block';
+                input.value = '';
+                input.focus();
+            }
+        };
+
+        function showAdminDashboard() {
+            pageAdminLogin.classList.add('hidden');
             pageAdmin.classList.remove('hidden');
             pageAdminDetail.classList.add('hidden');
             renderAdmin();
+        }
+
+        // 修改原有的 showAdmin 入口
+        window.showAdmin = function() {
+            // 先检查是否已登录
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                showAdminDashboard();
+            } else {
+                showAdminLogin();
+            }
         };
+
         function renderAdmin(){
             let records=getRecords();
             let html=`
@@ -380,6 +455,7 @@
                     <div><h1>📋 管理后台</h1><div class="sub">共 ${records.length} 条测试记录</div></div>
                     <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn btn-secondary" onclick="exportData()" style="width:auto; padding:8px 20px; font-size:14px;">📥 导出数据</button>
+                        <button class="btn btn-secondary" onclick="logoutAdmin()" style="width:auto; padding:8px 20px; font-size:14px;">🔒 退出</button>
                         <button class="btn btn-secondary" onclick="resetTest()" style="width:auto; padding:8px 20px; font-size:14px;">🧪 回到测试</button>
                     </div>
                 </div>
@@ -403,6 +479,13 @@
             html+=`</tbody></table></div>`;
             pageAdmin.innerHTML=html;
         }
+
+        window.logoutAdmin = function() {
+            sessionStorage.removeItem('admin_logged_in');
+            alert('已退出管理后台');
+            resetTest();
+        };
+
         window.viewDetail=function(id){
             let record=getRecord(id);
             if(!record){alert('记录不存在'); return;}
@@ -417,7 +500,7 @@
             let html=`
                 <div class="header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
                     <div><h1>📄 详细结果</h1><div class="sub">${name} · 身份证: ${idNumber||'未提供'} · ${new Date(created_at).toLocaleString()}</div></div>
-                    <button class="btn btn-secondary" onclick="showAdmin()" style="width:auto;padding:8px 20px;font-size:14px;">← 返回列表</button>
+                    <button class="btn btn-secondary" onclick="showAdminDashboard()" style="width:auto;padding:8px 20px;font-size:14px;">← 返回列表</button>
                 </div>
                 <div style="text-align:center;margin:8px 0;"><span class="type-badge" style="font-size:20px;">${typeKey}</span><div class="type-desc">${typeName}</div></div>
                 <div class="result-grid">
@@ -481,16 +564,20 @@
         };
 
         // ===================== 初始化 =====================
-        if(window.location.search.includes('admin')) showAdmin();
-        else renderTest();
+        if(window.location.search.includes('admin')) {
+            // 显示后台登录页（如果已登录则直接展示）
+            showAdminLogin();
+        } else {
+            renderTest();
+        }
 
         document.addEventListener('keydown', function(e){
             if(e.key==='ArrowLeft') { if(!pageTest.classList.contains('hidden')) window.prevQuestion&&window.prevQuestion(); }
             else if(e.key==='ArrowRight') { if(!pageTest.classList.contains('hidden')) window.nextQuestion&&window.nextQuestion(); }
         });
-        console.log('🧠 大五人格测试已加载 (含每题计时)');
+        console.log('🧠 大五人格测试已加载 (含后台密码保护)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
-        console.log('📋 数据存储在 localStorage 中');
+        console.log('🔑 默认密码: 88192283 (可修改代码中的 ADMIN_PASSWORD)');
     </script>
 </body>
 </html>
