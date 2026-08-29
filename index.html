@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人特质测试</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; color: #1a2332; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { max-width: 680px; width: 100%; background: #ffffff; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10); padding: 40px 36px 32px; transition: all 0.2s; }
+        .header { text-align: center; margin-bottom: 28px; }
+        .header h1 { font-size: 26px; font-weight: 700; letter-spacing: 1px; color: #0b1a2e; }
+        .header .sub { font-size: 15px; color: #7a8a9e; margin-top: 4px; font-weight: 400; letter-spacing: 0.3px; }
+        .instruction { background: #f5f8fe; border-radius: 16px; padding: 18px 22px; margin-bottom: 28px; font-size: 14px; line-height: 1.7; color: #1e3a5f; border-left: 4px solid #3b7cff; }
+        .instruction strong { color: #0b2b5c; }
+        .red-reminder { color: #d32f2f; font-weight: 600; }
+        .form-group { margin-bottom: 14px; text-align: center; }
+        .form-group label { display: block; font-weight: 600; font-size: 15px; margin-bottom: 5px; color: #1e2a3a; letter-spacing: 0.3px; }
+        .form-group input, .form-group select { width: 52%; padding: 12px 18px; border: 1.5px solid #dfe4ec; border-radius: 12px; font-size: 15px; background: #fafcff; outline: none; transition: 0.2s; display: block; margin: 0 auto; color: #1a2332; appearance: none; -webkit-appearance: none; }
+        .form-group input:focus, .form-group select:focus { border-color: #3b7cff; box-shadow: 0 0 0 4px rgba(59, 124, 255, 0.10); }
+        .form-group .birth-row { display: flex; gap: 12px; width: 52%; margin: 0 auto; }
+        .form-group .birth-row select { flex: 1; width: auto; padding: 12px 14px; cursor: pointer; }
+        .btn-wrap { text-align: center; margin-top: 22px; }
+        .btn { display: inline-block; width: 52%; padding: 14px 0; border: none; border-radius: 14px; font-size: 17px; font-weight: 600; cursor: pointer; transition: 0.2s; background: #eef2f7; color: #1a2a3a; letter-spacing: 0.5px; }
+        .btn-primary { background: #1a2a3a; color: #fff; box-shadow: 0 4px 14px rgba(26, 42, 58, 0.15); }
+        .btn-primary:hover { background: #0f1e2e; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(26, 42, 58, 0.20); }
+        .btn-primary:active { transform: scale(0.97); box-shadow: none; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-secondary { background: #e8edf5; color: #1a2a3a; }
+        .btn-secondary:hover { background: #dce3ee; }
+        .footer-note { text-align: center; margin-top: 18px; font-size: 13px; color: #b0bcc8; letter-spacing: 0.2px; }
+        .badge-progress { display: inline-block; background: #eef2f7; padding: 4px 14px; border-radius: 20px; font-size: 14px; font-weight: 500; color: #2c3e50; margin-top: 12px; }
+        .question-card { animation: fadeIn 0.25s ease; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+        .q-number { font-size:13px; font-weight:600; color:#3b7cff; background:#eef4fe; display:inline-block; padding:2px 14px; border-radius:20px; margin-bottom:12px; }
+        .q-text { font-size:18px; font-weight:500; line-height:1.5; margin-bottom:20px; color:#0b1a2e; }
+        .options { display:flex; flex-direction:column; gap:10px; }
+        .option-item { display:flex; align-items:center; padding:14px 18px; border:2px solid #e8edf5; border-radius:14px; cursor:pointer; transition:0.12s; background:#fafcff; user-select:none; }
+        .option-item:hover { border-color:#b8c9e0; background:#f5f8fe; }
+        .option-item.selected { border-color:#1a2a3a; background:#f0f4fe; }
+        .option-item input[type="radio"] { display:none; }
+        .option-label { font-size:15px; font-weight:500; margin-left:12px; flex:1; }
+        .option-score { font-size:13px; font-weight:600; color:#6b7a8d; background:#eef2f7; padding:2px 12px; border-radius:20px; }
+        .option-item.selected .option-score { background:#1a2a3a; color:#fff; }
+        .option-item .radio-circle { width:22px; height:22px; border-radius:50%; border:2px solid #ccd7e6; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:0.12s; }
+        .option-item.selected .radio-circle { border-color:#1a2a3a; background:#1a2a3a; }
+        .option-item.selected .radio-circle::after { content:"✓"; color:#fff; font-size:13px; font-weight:700; }
+        .progress-wrap { margin-top:20px; margin-bottom:8px; }
+        .progress-bar-bg { width:100%; height:6px; background:#e8edf5; border-radius:10px; overflow:hidden; }
+        .progress-bar-fill { height:100%; background:#1a2a3a; border-radius:10px; transition:width 0.3s ease; width:0%; }
+        .progress-text { display:flex; justify-content:space-between; font-size:13px; color:#6b7a8d; margin-top:6px; }
+        .success-icon { font-size:64px; text-align:center; margin:24px 0 12px; }
+        .success-title { font-size:24px; font-weight:700; text-align:center; color:#0b1a2e; }
+        .success-desc { text-align:center; color:#6b7a8d; margin:8px 0 24px; font-size:16px; }
+        .admin-table-wrap { overflow-x:auto; margin-top:16px; }
+        .admin-table { width:100%; border-collapse:collapse; font-size:14px; min-width:900px; }
+        .admin-table th { background:#f0f4fa; padding:10px 12px; text-align:left; font-weight:600; color:#1a2a3a; border-bottom:2px solid #dce2ec; white-space:nowrap; }
+        .admin-table td { padding:10px 12px; border-bottom:1px solid #e8edf5; vertical-align:middle; }
+        .admin-table tr:hover td { background:#f8fafd; }
+        .admin-stat { display:flex; gap:20px; flex-wrap:wrap; margin:12px 0 16px; }
+        .admin-stat span { background:#f0f4fa; padding:6px 16px; border-radius:20px; font-size:14px; }
+        .hidden { display:none !important; }
+        .back-link { display:inline-block; margin-bottom:16px; color:#3b7cff; font-weight:500; cursor:pointer; }
+        .back-link:hover { text-decoration:underline; }
+        @media (max-width:480px) {
+            .container { padding:24px 18px 20px; border-radius:24px; }
+            .header h1 { font-size:22px; }
+            .form-group input, .form-group select, .btn, .form-group .birth-row { width:85%; }
+            .btn { width:85%; }
+            .q-text { font-size:16px; }
+            .option-item { padding:12px 14px; }
+            .admin-table { font-size:12px; min-width:600px; }
+        }
+        ::-webkit-scrollbar { width:6px; height:6px; }
+        ::-webkit-scrollbar-thumb { background:#ccd7e6; border-radius:10px; }
+        ::-webkit-scrollbar-track { background:#f0f4fa; }
+        .consistency-warn { background:#fef6f0; border-left:4px solid #e67e22; padding:14px 18px; border-radius:12px; margin:16px 0; font-size:14px; color:#7a4a1a; }
+        .consistency-ok { background:#edf7f0; border-left:4px solid #27ae60; padding:14px 18px; border-radius:12px; margin:16px 0; font-size:14px; color:#1a6a3a; }
+        .result-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin:20px 0; }
+        .result-item { background:#f5f8fe; border-radius:16px; padding:16px 14px; text-align:center; }
+        .result-item .dim { font-size:13px; font-weight:600; color:#6b7a8d; letter-spacing:0.5px; text-transform:uppercase; }
+        .result-item .score { font-size:28px; font-weight:700; color:#0b1a2e; margin:4px 0; }
+        .result-item .level { font-size:13px; font-weight:500; padding:2px 12px; border-radius:20px; display:inline-block; }
+        .level-high { background:#e1f7e8; color:#0d6e3a; }
+        .level-mid { background:#fff4e0; color:#a5650a; }
+        .level-low { background:#fde8e8; color:#b13a3a; }
+        .type-badge { display:inline-block; background:#0b1a2e; color:#fff; padding:8px 24px; border-radius:30px; font-size:18px; font-weight:700; margin:12px 0 6px; }
+        .type-desc { font-size:15px; color:#2c3e50; margin-top:4px; text-align:center; }
+        .admin-login-box { max-width:380px; margin:40px auto; padding:30px 24px; background:#f8fafd; border-radius:20px; text-align:center; }
+        .admin-login-box h2 { font-size:20px; margin-bottom:16px; }
+        .admin-login-box input { width:100%; padding:12px; border:1.5px solid #dce2ec; border-radius:12px; font-size:16px; margin-bottom:12px; outline:none; }
+        .admin-login-box input:focus { border-color:#3b7cff; box-shadow:0 0 0 3px rgba(59,124,255,0.12); }
+        .admin-login-box .btn { width:100%; }
+        .admin-login-box .error { color:#b13a3a; font-size:14px; margin-top:8px; }
+        .fast-answer { background:#ffe0e0 !important; }
+        .fast-answer td { background:#ffe0e0 !important; }
+        .warning-box { background:#fff3f3; border-left:4px solid #d32f2f; padding:14px 18px; border-radius:12px; margin:16px 0; font-size:14px; color:#7a1a1a; }
+        .warning-box strong { color:#b13a3a; }
+        .quality-summary { background:#fef6f0; border:1px solid #f5c6cb; border-radius:12px; padding:14px 18px; margin:16px 0; }
+        .quality-summary h3 { font-size:16px; color:#b13a3a; margin-bottom:8px; }
+        .quality-summary ul { list-style:none; padding-left:0; }
+        .quality-summary ul li { padding:4px 0; font-size:14px; border-bottom:1px solid #f0e0d8; }
+        .quality-summary ul li:last-child { border-bottom:none; }
+        .quality-pass { color:#2e7d32; }
+        .quality-fail { color:#b13a3a; font-weight:bold; }
+        .birth-display { font-size:14px; color:#4a5a6a; }
+        .job-recommend { background: #f0f7ff; border-radius: 16px; padding: 18px 22px; margin: 16px 0; }
+        .job-recommend .job-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
+        .job-recommend .job-list { display: flex; flex-wrap: wrap; gap: 8px 16px; }
+        .job-recommend .job-list .tag { background: #ffffff; padding: 4px 14px; border-radius: 20px; font-size: 14px; border: 1px solid #dce2ec; }
+        .job-recommend .job-list .tag.good { border-color: #2e7d32; background: #e8f5e9; color: #1e5a22; }
+        .job-recommend .job-list .tag.bad { border-color: #c62828; background: #ffebee; color: #a51a1a; }
+        .job-recommend .job-desc { font-size: 13px; color: #5a6a7e; margin-top: 4px; }
+        .job-recommend .warning-msg { background: #fff3cd; border:1px solid #ffc107; border-radius:8px; padding:8px 12px; margin-bottom:10px; font-size:14px; color:#856404; }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <div id="page-test"></div>
+        <div id="page-success" class="hidden"></div>
+        <div id="page-admin" class="hidden"></div>
+        <div id="page-admin-detail" class="hidden"></div>
+        <div id="page-admin-login" class="hidden"></div>
+    </div>
+
+    <script>
+        // ===================== 配置 =====================
+        const ADMIN_PASSWORD = '88192283';
+
+        // ===================== 问卷数据（50题） =====================
+        const QUESTIONS = [
+            { id:1, text:"我是聚会中的焦点。", dim:"E", dir:"+" },
+            { id:2, text:"我对他人很少关心。", dim:"A", dir:"-" },
+            { id:3, text:"我总是提前做好准备。", dim:"C", dir:"+" },
+            { id:4, text:"我容易感到压力。", dim:"N", dir:"-" },
+            { id:5, text:"我的词汇量丰富。", dim:"O", dir:"+" },
+            { id:6, text:"我话不多。", dim:"E", dir:"-" },
+            { id:7, text:"我对人充满兴趣。", dim:"A", dir:"+" },
+            { id:8, text:"我经常把物品乱放。", dim:"C", dir:"-" },
+            { id:9, text:"大多数时候我很放松。", dim:"N", dir:"+" },
+            { id:10, text:"我理解抽象概念有困难。", dim:"O", dir:"-" },
+            { id:11, text:"与人相处让我感到自在。", dim:"E", dir:"+" },
+            { id:12, text:"我会出口伤人。", dim:"A", dir:"-" },
+            { id:13, text:"我关注细节。", dim:"C", dir:"+" },
+            { id:14, text:"我经常担忧。", dim:"N", dir:"-" },
+            { id:15, text:"我的想象力生动。", dim:"O", dir:"+" },
+            { id:16, text:"我习惯保持低调。", dim:"E", dir:"-" },
+            { id:17, text:"我善于体会他人情绪。", dim:"A", dir:"+" },
+            { id:18, text:"我常把事情弄乱。", dim:"C", dir:"-" },
+            { id:19, text:"我很少情绪低落。", dim:"N", dir:"+" },
+            { id:20, text:"我对抽象思想不感兴趣。", dim:"O", dir:"-" },
+            { id:21, text:"我会主动开启对话。", dim:"E", dir:"+" },
+            { id:22, text:"我对别人的问题漠不关心。", dim:"A", dir:"-" },
+            { id:23, text:"我立即完成待办事项。", dim:"C", dir:"+" },
+            { id:24, text:"我容易被干扰。", dim:"N", dir:"-" },
+            { id:25, text:"我常有好点子。", dim:"O", dir:"+" },
+            { id:26, text:"我很少发言。", dim:"E", dir:"-" },
+            { id:27, text:"我心肠软。", dim:"A", dir:"+" },
+            { id:28, text:"我常忘记把东西归位。", dim:"C", dir:"-" },
+            { id:29, text:"我容易沮丧。", dim:"N", dir:"-" },
+            { id:30, text:"我缺乏想象力。", dim:"O", dir:"-" },
+            { id:31, text:"在聚会上我能与多人交谈。", dim:"E", dir:"+" },
+            { id:32, text:"我对他人兴趣不大。", dim:"A", dir:"-" },
+            { id:33, text:"我喜欢井然有序。", dim:"C", dir:"+" },
+            { id:34, text:"我情绪波动大。", dim:"N", dir:"-" },
+            { id:35, text:"我领悟新事物很快。", dim:"O", dir:"+" },
+            { id:36, text:"我不喜欢成为注意中心。", dim:"E", dir:"-" },
+            { id:37, text:"我愿意为他人腾出时间。", dim:"A", dir:"+" },
+            { id:38, text:"我会逃避职责。", dim:"C", dir:"-" },
+            { id:39, text:"我情绪起伏频繁。", dim:"N", dir:"+" },
+            { id:40, text:"我常用高难度词汇。", dim:"O", dir:"+" },
+            { id:41, text:"我不介意成为焦点。", dim:"E", dir:"+" },
+            { id:42, text:"我能感受他人情绪。", dim:"A", dir:"+" },
+            { id:43, text:"我按计划行事。", dim:"C", dir:"+" },
+            { id:44, text:"我容易烦躁。", dim:"N", dir:"-" },
+            { id:45, text:"我常花时间反思。", dim:"O", dir:"+" },
+            { id:46, text:"我在陌生人面前很安静。", dim:"E", dir:"-" },
+            { id:47, text:"我能让别人放松。", dim:"A", dir:"+" },
+            { id:48, text:"我对工作要求严格。", dim:"C", dir:"+" },
+            { id:49, text:"我经常感到忧郁。", dim:"N", dir:"+" },
+            { id:50, text:"我充满创意。", dim:"O", dir:"+" }
+        ];
+
+        const DIM_KEYS = ['E','A','C','N','O'];
+        const DIM_NAMES = { E:"外向性", A:"宜人性", C:"尽责性", N:"情绪稳定性", O:"开放性" };
+        const TYPE_MAP = {
+            "HHHHL":"全能领袖型 (魅力＋合作＋自律＋情绪稳＋创新)",
+            "HHHLL":"传统队长型 (外向、可靠、亲和、保守)",
+            "HHHHH":"高压创意总监 (高能量＋完美主义＋易焦虑)",
+            "HHHHL":"操心组织者 (热心、规矩、神经紧绷)",
+            "HHLHH":"社交梦想家 (点子多、执行力弱、好相处)",
+            "HHLHL":"随和玩家 (爱热闹、不较真、随性)",
+            "HHLHH":"情绪波动艺术家 (外向、敏感、创意、散漫)",
+            "HHLHL":"焦虑话痨好人 (热心、担忧、拖延)",
+            "HLHLH":"进取开拓者 (果断、自律、求新、不迁就)",
+            "HLHLL":"传统硬汉经理 (外向、守纪、强硬、务实)",
+            "HLHHH":"高压创新领袖 (雄心、焦虑、掌控、开放)",
+            "HLHHL":"紧张控制者 (强势、细节控、神经质)",
+            "HLLHH":"冒险创业家 (冲劲、点子多、无条理、冷漠)",
+            "HLLHL":"魅力销售王 (能说会道、粗放、自我中心)",
+            "HLLHH":"波动叛逆者 (外向、不安、冲动、前卫)",
+            "HLLHL":"冲动支配者 (暴躁、随性、自我)",
+            "LHH LH":"安静策划者 (内向、可靠、温和、创新)",
+            "LHHLL":"幕后守护者 (低调、守规矩、亲切、保守)",
+            "LHHHH":"谨慎完美主义者 (内向、焦虑、负责、创意)",
+            "LHHHL":"担忧支援者 (内向、规矩、体贴、易紧张)",
+            "LHLHH":"佛系梦想家 (内向、随性、友善、好奇)",
+            "LHLHL":"温和懒人 (好相处、不主动、无计划)",
+            "LHLHH":"敏感诗人 (内向、焦虑、亲和、创意)",
+            "LHLHL":"社恐老好人 (害羞、担忧、体贴)",
+            "LLHLH":"冷面专家 (内向、自律、理性、求新)",
+            "LLHLL":"技术工匠 (内向、严谨、务实、不社交)",
+            "LLHHH":"焦虑天才 (内向、完美、神经质、创意)",
+            "LLHHL":"紧张技术控 (内向、细节控、忧虑、保守)",
+            "LL LHH":"孤僻思想家 (内向、随性、冷漠、好奇)",
+            "LLLLL":"隐士懒人 (低能量、低合作、低规划、低兴趣)",
+            "LLLHH":"边缘艺术家 (内向、冲动、焦虑、前卫)",
+            "LLLHL":"退缩暴躁者 (孤僻、懒散、易怒)"
+        };
+        const CONSISTENCY_PAIRS = [
+            [1,6],[11,16],[21,26],[31,36],[41,46],
+            [2,7],[12,17],[22,27],[32,37],
+            [3,8],[13,18],[23,28],[33,38],[43,48],
+            [4,9],[14,19],[24,29],[34,39],[44,49],
+            [5,10],[15,20],[25,30],[35,40],[45,50]
+        ];
+
+        // ===================== 岗位数据库（9个岗位） =====================
+        const JOB_DB = [
+            { name: '销售代表', category: '市场类', e: 5, a: 4, c: 3, n: 4, o: 3 },
+            { name: '跟单员', category: '市场类', e: 3, a: 4, c: 4, n: 4, o: 3 },
+            { name: '会计', category: '财务类', e: 2, a: 3, c: 5, n: 5, o: 2 },
+            { name: '设计研发', category: '研发类', e: 3, a: 3, c: 3, n: 3, o: 5 },
+            { name: '工艺', category: '质量/工艺类', e: 3, a: 3, c: 4, n: 4, o: 4 },
+            { name: '品控', category: '质量/工艺类', e: 2, a: 3, c: 5, n: 4, o: 2 },
+            { name: '行政人事', category: '职能支持类', e: 3, a: 5, c: 4, n: 4, o: 3 },
+            { name: '采购', category: '职能支持类', e: 4, a: 4, c: 4, n: 4, o: 3 },
+            { name: '生产计划', category: '职能支持类', e: 3, a: 3, c: 5, n: 4, o: 3 }
+        ];
+
+        // ===================== 工具函数 =====================
+        function getDimItems(dim) { return QUESTIONS.filter(q=>q.dim===dim); }
+
+        function calcScores(answers) {
+            let scores={}, levels={}, raw={};
+            for (let d of DIM_KEYS) {
+                let items=getDimItems(d), sum=0;
+                for (let q of items) {
+                    let idx=q.id-1, val=answers[idx]||3;
+                    if(q.dir==='-') val=6-val;
+                    sum+=val;
+                }
+                raw[d]=sum; scores[d]=Math.round(sum);
+                if(sum<=29) levels[d]='低'; else if(sum<=40) levels[d]='中'; else levels[d]='高';
+            }
+            return {scores, levels, raw};
+        }
+
+        function getTypeKey(levels) { let key=''; for(let d of DIM_KEYS) key+=(levels[d]==='高'?'H':'L'); return key; }
+        function getTypeName(key) {
+            for(let [k,v] of Object.entries(TYPE_MAP)) if(k.replace(/\s/g,'')===key) return v;
+            for(let [k,v] of Object.entries(TYPE_MAP)) {
+                let cleanK=k.replace(/\s/g,'');
+                if(cleanK.length===5 && cleanK[0]===key[0] && cleanK[1]===key[1] && cleanK[2]===key[2] && cleanK[3]===key[3] && cleanK[4]===key[4]) return v;
+            }
+            return key+" (未定义类型)";
+        }
+
+        function checkConsistency(answers) {
+            let passed=0, details=[];
+            for(let [id1,id2] of CONSISTENCY_PAIRS) {
+                let s1=answers[id1-1]||3, s2=answers[id2-1]||3;
+                let diff=Math.abs(s1+s2-6), ok=diff<=2;
+                if(ok) passed++;
+                details.push({q1:id1,q2:id2,score1:s1,score2:s2,diff,ok});
+            }
+            return {total:details.length, passed, details};
+        }
+
+        function countMiddleAnswers(answers) { let c=0; for(let a of answers) if(a===3) c++; return c; }
+
+        function detectQualityIssues(answers) {
+            let issues = [];
+            let scores = answers.filter(a => a !== null && a !== undefined);
+            if (scores.length === 0) return issues;
+            let mean = scores.reduce((a,b)=>a+b,0) / scores.length;
+            let variance = scores.reduce((a,b)=>a + Math.pow(b-mean,2), 0) / scores.length;
+            let stdDev = Math.sqrt(variance);
+            if (stdDev < 0.8) issues.push({ type: '直线作答', detail: `选项离散度极低（标准差=${stdDev.toFixed(2)}），可能未认真阅读。` });
+            let maxSeq = 1, curSeq = 1;
+            for (let i=1; i<scores.length; i++) {
+                if (scores[i] === scores[i-1] + 1 || scores[i] === scores[i-1] - 1) { curSeq++; if(curSeq>maxSeq) maxSeq=curSeq; }
+                else curSeq = 1;
+            }
+            if (maxSeq >= 8) issues.push({ type: '规律性作答', detail: `连续递增/递减序列长度达 ${maxSeq} 题，存在机械点选嫌疑。` });
+            let extremeCount = scores.filter(v => v === 1 || v === 5).length;
+            if (extremeCount > 30) issues.push({ type: '极端社会赞许性', detail: `选"非常不符合(1)"或"非常符合(5)"共 ${extremeCount} 题（>30），可能存在刻意美化或贬低。` });
+            return issues;
+        }
+
+        function getJobRecommendations(typeKey) {
+            const dims = typeKey.split('').map(ch => ch === 'H');
+            const dimNames = ['e','a','c','n','o'];
+            let scored = JOB_DB.map(job => {
+                let score = 0;
+                for (let i=0; i<5; i++) {
+                    const isHigh = dims[i];
+                    const jobVal = job[dimNames[i]] || 3;
+                    if (isHigh) score += jobVal * 2;
+                    else score += (6 - jobVal) * 2;
+                }
+                return { name: job.name, category: job.category, score: score };
+            });
+            scored.sort((a,b) => b.score - a.score);
+            const recommended = scored.slice(0,3);
+            const notRecommended = scored.slice(-2).reverse();
+            return { recommended, notRecommended };
+        }
+
+        // ===================== 存储 =====================
+        function saveRecord(data) {
+            try {
+                let records = JSON.parse(localStorage.getItem('bigfive_records') || '[]');
+                let record = {
+                    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+                    created_at: new Date().toISOString(),
+                    ...data
+                };
+                records.push(record);
+                localStorage.setItem('bigfive_records', JSON.stringify(records));
+                return record;
+            } catch (e) {
+                console.error('保存失败:', e);
+                return null;
+            }
+        }
+
+        function getRecords(){ return JSON.parse(localStorage.getItem('bigfive_records') || '[]'); }
+        function getRecord(id){ return getRecords().find(r=>r.id===id)||null; }
+
+        // ===================== 页面逻辑 =====================
+        const pageTest=document.getElementById('page-test');
+        const pageSuccess=document.getElementById('page-success');
+        const pageAdmin=document.getElementById('page-admin');
+        const pageAdminDetail=document.getElementById('page-admin-detail');
+        const pageAdminLogin=document.getElementById('page-admin-login');
+
+        let state = {
+            started: false, currentQ: 0, answers: new Array(50).fill(null),
+            answerDurations: new Array(50).fill(0), startTimes: new Array(50).fill(0),
+            name: '', birth: '', submitted: false, recordId: null
+        };
+
+        function formatBirth(birthStr) {
+            if (!birthStr) return '未提供';
+            let parts = birthStr.split('-');
+            if (parts.length===2) return parts[0]+'年'+parts[1]+'月';
+            return birthStr;
+        }
+
+        function getYearOptions(selected) {
+            const cur = new Date().getFullYear();
+            let html='';
+            for (let y=cur; y>=1930; y--) {
+                html += `<option value="${y}" ${y==selected?'selected':''}>${y}年</option>`;
+            }
+            return html;
+        }
+        function getMonthOptions(selected) {
+            let html='';
+            for (let m=1; m<=12; m++) {
+                let val=String(m).padStart(2,'0');
+                html += `<option value="${val}" ${val==selected?'selected':''}>${m}月</option>`;
+            }
+            return html;
+        }
+
+        function renderTest() {
+            pageTest.classList.remove('hidden');
+            pageSuccess.classList.add('hidden');
+            pageAdmin.classList.add('hidden');
+            pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.add('hidden');
+
+            if (!state.started) {
+                let birthYear='', birthMonth='';
+                if (state.birth) {
+                    let parts=state.birth.split('-');
+                    if (parts.length===2) { birthYear=parts[0]; birthMonth=parts[1]; }
+                }
+                if (!birthYear) { let now=new Date(); birthYear=String(now.getFullYear()); birthMonth=String(now.getMonth()+1).padStart(2,'0'); }
+                let html=`
+                    <div class="header"><h1>🧠 个人特质测试</h1><div class="sub">描述性了解 · 不影响录取</div></div>
+                    <div class="instruction">
+                        <strong>📋 指导语</strong><br>
+                        该测试仅作为一个描述性了解，不涉及个人录取与否。<br>
+                        请根据您近两年的实际表现，而非理想状态，诚实作答。<br><br>
+                        选项本身没有“好坏”之分，请根据自己的第一感觉回答，不要过多思考“应该”怎么选。<br>
+                        <span class="red-reminder">提醒：请尽量避免中性选择"3=一般"，以保证结果有效。</span>
+                    </div>
+                    <div class="form-group"><label>姓名</label><input type="text" id="input-name" placeholder="请输入您的姓名" value="${state.name}"></div>
+                    <div class="form-group">
+                        <label>出生年月</label>
+                        <div class="birth-row">
+                            <select id="birth-year">${getYearOptions(birthYear)}</select>
+                            <select id="birth-month">${getMonthOptions(birthMonth)}</select>
+                        </div>
+                    </div>
+                    <div class="btn-wrap"><button class="btn btn-primary" onclick="startTest()">开始测试 →</button></div>
+                    <div class="footer-note">共 ${QUESTIONS.length} 题，约需 5-8 分钟</div>
+                `;
+                pageTest.innerHTML=html;
+                return;
+            }
+
+            let q=QUESTIONS[state.currentQ];
+            let total=QUESTIONS.length;
+            let progress=state.currentQ/total*100;
+            let selected=state.answers[state.currentQ]||null;
+            let allAnswered=state.answers.every(a=>a!==null);
+            if (state.startTimes[state.currentQ]===0) state.startTimes[state.currentQ]=Date.now();
+
+            let isLast = (state.currentQ === total - 1);
+            let showSubmit = allAnswered && isLast;
+
+            let html=`
+                <div class="header"><h1>🧠 个人特质测试</h1><div class="badge-progress">${state.currentQ+1} / ${total}</div></div>
+                <div class="question-card">
+                    <div class="q-number">第 ${state.currentQ+1} 题</div>
+                    <div class="q-text">${q.text}</div>
+                    <div class="options">
+            `;
+            let labels=['非常不符合','不太符合','一般','比较符合','非常符合'];
+            for (let i=1; i<=5; i++) {
+                let sel=selected===i?'selected':'';
+                html+=`<div class="option-item ${sel}" onclick="selectOption(${i})"><div class="radio-circle"></div><span class="option-label">${labels[i-1]}</span><span class="option-score">${i}</span></div>`;
+            }
+            html+=`
+                    </div>
+                </div>
+                <div class="progress-wrap">
+                    <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${progress}%"></div></div>
+                    <div class="progress-text"><span>进度</span><span>${Math.round(progress)}%</span></div>
+                </div>
+                <div style="display:flex; gap:10px; margin-top:8px;">
+                    <button class="btn btn-secondary" onclick="prevQuestion()" ${state.currentQ===0?'disabled':''}>← 上一题</button>
+                    ${showSubmit ?
+                        `<button class="btn btn-primary" onclick="submitTest()">📊 提交</button>` :
+                        `<button class="btn btn-primary" onclick="nextQuestion()" ${!selected?'disabled':''}>继续 →</button>`
+                    }
+                </div>
+                <div style="margin-top:12px; font-size:13px; color:#6b7a8d; text-align:center;">
+                    已答 ${state.answers.filter(a=>a!==null).length} / ${total} 题
+                    ${showSubmit ? '<br><span style="color:#d32f2f;font-weight:600;">请点击“提交”按钮完成作答</span>' : ''}
+                </div>
+            `;
+            pageTest.innerHTML=html;
+        }
+
+        window.startTest = function() {
+            let name=document.getElementById('input-name').value.trim();
+            let yearSelect=document.getElementById('birth-year');
+            let monthSelect=document.getElementById('birth-month');
+            if (!name) { alert('请输入姓名'); return; }
+            if (!yearSelect || !monthSelect) { alert('请选择出生年月'); return; }
+            let year=yearSelect.value, month=monthSelect.value;
+            if (!year || !month) { alert('请选择出生年月'); return; }
+            state.name=name;
+            state.birth=year+'-'+month;
+            state.started=true;
+            state.currentQ=0;
+            state.answers=new Array(50).fill(null);
+            state.answerDurations=new Array(50).fill(0);
+            state.startTimes=new Array(50).fill(0);
+            renderTest();
+        };
+
+        window.selectOption = function(val) {
+            let start=state.startTimes[state.currentQ];
+            if (start>0) state.answerDurations[state.currentQ]=Date.now()-start;
+            state.answers[state.currentQ]=val;
+            renderTest();
+            // 如果还没全部答完，自动前进到下一题
+            if (!state.answers.every(a=>a!==null) && state.currentQ < QUESTIONS.length-1) {
+                state.currentQ++;
+                renderTest();
+            }
+            // 如果全部答完，停留在当前页面（显示提交按钮）
+        };
+
+        window.prevQuestion = function() {
+            if (state.currentQ>0) { state.currentQ--; renderTest(); }
+        };
+
+        window.nextQuestion = function() {
+            if (state.answers[state.currentQ]===null) return;
+            if (state.currentQ < QUESTIONS.length-1) {
+                state.currentQ++;
+                renderTest();
+            }
+        };
+
+        function submitTest() {
+            if (state.submitted) {
+                console.log('已经提交过，忽略');
+                return;
+            }
+            let allAnswered = state.answers.every(a => a !== null);
+            if (!allAnswered) {
+                alert('请完成所有题目');
+                return;
+            }
+            state.submitted = true;
+
+            // 防重复提交（30秒内相同姓名+出生年月）
+            try {
+                let records = JSON.parse(localStorage.getItem('bigfive_records') || '[]');
+                let last = records.length > 0 ? records[records.length - 1] : null;
+                if (last && last.name === state.name && last.birth === state.birth) {
+                    let lastTime = new Date(last.created_at).getTime();
+                    let now = Date.now();
+                    if (now - lastTime < 30000) {
+                        console.warn('检测到重复提交，已忽略');
+                        renderSuccess();
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            let {scores, levels, raw} = calcScores(state.answers);
+            let typeKey = getTypeKey(levels);
+            let typeName = getTypeName(typeKey);
+            let consistency = checkConsistency(state.answers);
+            let middleCount = countMiddleAnswers(state.answers);
+            let answersDetail = state.answers.map((score,idx)=>({questionId:idx+1, score, duration:state.answerDurations[idx]||0}));
+            let qualityIssues = detectQualityIssues(state.answers);
+
+            let record = saveRecord({
+                name: state.name,
+                birth: state.birth,
+                answers: state.answers.slice(),
+                answerDurations: state.answerDurations.slice(),
+                answersDetail,
+                scores,
+                levels,
+                raw,
+                typeKey,
+                typeName,
+                consistency,
+                middleCount,
+                qualityIssues
+            });
+            if (record) {
+                state.recordId = record.id;
+                renderSuccess();
+            } else {
+                alert('数据保存失败，请检查浏览器控制台错误');
+                state.submitted = false;
+            }
+        }
+
+        function renderSuccess() {
+            pageTest.classList.add('hidden');
+            pageSuccess.classList.remove('hidden');
+            pageAdmin.classList.add('hidden');
+            pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.add('hidden');
+            pageSuccess.innerHTML=`
+                <div class="success-icon">✅</div>
+                <div class="success-title">提交成功</div>
+                <div class="success-desc">感谢您的参与，您的作答已成功提交。</div>
+                <div class="footer-note">结果将由管理员统一查看</div>
+            `;
+        }
+
+        window.resetTest = function() {
+            state = {
+                started: false, currentQ: 0, answers: new Array(50).fill(null),
+                answerDurations: new Array(50).fill(0), startTimes: new Array(50).fill(0),
+                name: '', birth: '', submitted: false, recordId: null
+            };
+            renderTest();
+        };
+
+        // ===================== 管理后台（含删除功能） =====================
+        function showAdminLogin() {
+            pageTest.classList.add('hidden');
+            pageSuccess.classList.add('hidden');
+            pageAdmin.classList.add('hidden');
+            pageAdminDetail.classList.add('hidden');
+            pageAdminLogin.classList.remove('hidden');
+            if (sessionStorage.getItem('admin_logged_in')==='true') {
+                pageAdminLogin.classList.add('hidden');
+                showAdminDashboard();
+                return;
+            }
+            let html=`
+                <div class="admin-login-box">
+                    <h2>🔐 管理后台登录</h2>
+                    <p style="font-size:14px; color:#6b7a8d; margin-bottom:16px;">请输入管理密码</p>
+                    <input type="password" id="admin-password-input" placeholder="请输入密码" autofocus>
+                    <button class="btn btn-primary" onclick="verifyAdminPassword()">登录</button>
+                    <div id="admin-login-error" class="error" style="display:none;">密码错误，请重试</div>
+                    <div style="margin-top:16px; font-size:13px; color:#a0b0c0;">
+                        <a href="#" onclick="resetTest()" style="color:#3b7cff; text-decoration:none;">← 返回测试</a>
+                    </div>
+                </div>
+            `;
+            pageAdminLogin.innerHTML=html;
+            document.addEventListener('keydown', function(e) {
+                if (e.key==='Enter' && !pageAdminLogin.classList.contains('hidden')) verifyAdminPassword();
+            });
+        }
+
+        window.verifyAdminPassword = function() {
+            let input=document.getElementById('admin-password-input');
+            let error=document.getElementById('admin-login-error');
+            if (!input) return;
+            if (input.value===ADMIN_PASSWORD) {
+                sessionStorage.setItem('admin_logged_in','true');
+                pageAdminLogin.classList.add('hidden');
+                showAdminDashboard();
+            } else {
+                error.style.display='block';
+                input.value='';
+                input.focus();
+            }
+        };
+
+        function showAdminDashboard() {
+            pageAdminLogin.classList.add('hidden');
+            pageAdmin.classList.remove('hidden');
+            pageAdminDetail.classList.add('hidden');
+            renderAdmin();
+        }
+
+        window.showAdmin = function() {
+            if (sessionStorage.getItem('admin_logged_in')==='true') showAdminDashboard();
+            else showAdminLogin();
+        };
+
+        function renderAdmin() {
+            let records = getRecords();
+            let html = `
+                <div class="header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                    <div><h1>📋 管理后台</h1><div class="sub">共 ${records.length} 条测试记录</div></div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-secondary" onclick="exportData()" style="width:auto; padding:8px 20px; font-size:14px;">📥 导出数据</button>
+                        <button class="btn btn-secondary" onclick="logoutAdmin()" style="width:auto; padding:8px 20px; font-size:14px;">🔒 退出</button>
+                        <button class="btn btn-secondary" onclick="resetTest()" style="width:auto; padding:8px 20px; font-size:14px;">🧪 回到测试</button>
+                    </div>
+                </div>
+                <div class="admin-stat"><span>📊 总记录: ${records.length}</span><span>⏱ 最近: ${records.length?new Date(records[records.length-1].created_at).toLocaleString():'-'}</span></div>
+            `;
+            if (records.length === 0) {
+                html += `<div style="text-align:center; padding:40px 0; color:#6b7a8d;">暂无测试记录</div>`;
+                pageAdmin.innerHTML = html;
+                return;
+            }
+            html += `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>姓名</th><th>出生年月</th><th>时间</th><th>E</th><th>A</th><th>C</th><th>N</th><th>O</th><th>类型</th><th>一致性</th><th>操作</th></tr></thead><tbody>`;
+            let sorted = [...records].reverse();
+            for (let r of sorted) {
+                let s = r.scores || {}, cons = r.consistency || { passed: 0, total: 0 };
+                let consRate = cons.total ? Math.round(cons.passed / cons.total * 100) : 0;
+                let warn = consRate < 70 ? '🔴' : (r.middleCount > 10 ? '🟡' : '🟢');
+                let time = new Date(r.created_at).toLocaleString();
+                let birthDisplay = r.birth ? formatBirth(r.birth) : '未提供';
+                html += `<tr>
+                    <td><strong>${r.name}</strong></td>
+                    <td style="font-size:13px;color:#4a5a6a;">${birthDisplay}</td>
+                    <td style="font-size:12px;color:#6b7a8d;">${time}</td>
+                    <td>${s.E||'-'}</td><td>${s.A||'-'}</td><td>${s.C||'-'}</td><td>${s.N||'-'}</td><td>${s.O||'-'}</td>
+                    <td style="font-weight:600;font-size:13px;">${r.typeKey||'-'}</td>
+                    <td>${warn} ${consRate}%</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="viewDetail('${r.id}')" style="width:auto;padding:4px 10px;font-size:12px;">查看</button>
+                        <button class="btn btn-secondary" onclick="deleteRecord('${r.id}')" style="width:auto;padding:4px 10px;font-size:12px;background:#f8d7da;color:#721c24;border-color:#f5c6cb;">删除</button>
+                    </td>
+                </tr>`;
+            }
+            html += `</tbody></table></div>`;
+            pageAdmin.innerHTML = html;
+        }
+
+        window.deleteRecord = function(id) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            let records = getRecords();
+            let index = records.findIndex(r => r.id === id);
+            if (index === -1) { alert('记录不存在'); return; }
+            records.splice(index, 1);
+            localStorage.setItem('bigfive_records', JSON.stringify(records));
+            alert('已删除');
+            renderAdmin();
+        };
+
+        window.logoutAdmin = function() {
+            sessionStorage.removeItem('admin_logged_in');
+            alert('已退出管理后台');
+            resetTest();
+        };
+
+        window.viewDetail = function(id) {
+            let record = getRecord(id);
+            if (!record) { alert('记录不存在'); return; }
+            pageAdmin.classList.add('hidden');
+            pageAdminDetail.classList.remove('hidden');
+            renderDetail(record);
+        };
+
+        function renderDetail(record) {
+            let {scores, levels, typeKey, typeName, consistency, answers, answerDurations, answersDetail, name, birth, created_at, middleCount, qualityIssues} = record;
+            let dimOrder=['E','A','C','N','O'];
+            let dimLabels={E:'外向性',A:'宜人性',C:'尽责性',N:'情绪稳定性',O:'开放性'};
+            let jobRec = getJobRecommendations(typeKey);
+
+            let fastQuestions=[];
+            let details = answersDetail || QUESTIONS.map((q,i)=>({questionId:q.id, score:answers?answers[i]:'-', duration:answerDurations?answerDurations[i]:0}));
+            for (let d of details) {
+                if (d.duration!==undefined && d.duration<3000 && d.duration>0) fastQuestions.push(d.questionId);
+            }
+            let totalDur=0, validCount=0;
+            for (let d of details) {
+                if (d.duration!==undefined && d.duration>0) { totalDur+=d.duration; validCount++; }
+            }
+            let avgDur = validCount>0 ? (totalDur/validCount/1000).toFixed(1) : 0;
+            let birthDisplay = birth ? formatBirth(birth) : '未提供';
+
+            let cons = consistency||{passed:0,total:0};
+            let passRate = cons.total ? Math.round(cons.passed/cons.total*100) : 0;
+            let hasAbnormal = (qualityIssues && qualityIssues.length > 0) || (passRate < 60) || (fastQuestions.length > 0) || (middleCount > 15);
+
+            let jobHtml = '';
+            let warningMsg = hasAbnormal ? `<div class="warning-msg">⚠️ 注意：您的作答存在异常（一致性偏低、秒选、中性过多等），以下岗位建议仅供参考，可信度可能受到影响。</div>` : '';
+            let recommended = jobRec.recommended;
+            let notRecommended = jobRec.notRecommended;
+            jobHtml = `
+                <div class="job-recommend">
+                    ${warningMsg}
+                    <div style="margin-bottom:10px;">
+                        <div class="job-title" style="color:#1a5a2a;">✅ 适合岗位</div>
+                        <div class="job-list">
+                            ${recommended.map(j => `<span class="tag good">${j.category}·${j.name}</span>`).join('')}
+                        </div>
+                        <div class="job-desc">上述岗位与您的特质匹配度较高，可优先考虑。</div>
+                    </div>
+                    <div>
+                        <div class="job-title" style="color:#a51a1a;">❌ 不适合岗位</div>
+                        <div class="job-list">
+                            ${notRecommended.map(j => `<span class="tag bad">${j.category}·${j.name}</span>`).join('')}
+                        </div>
+                        <div class="job-desc">上述岗位与您的特质匹配度较低，建议慎重考虑。</div>
+                    </div>
+                </div>
+            `;
+
+            let html=`
+                <div class="header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
+                    <div><h1>📄 详细结果</h1><div class="sub">${name} · 出生: ${birthDisplay} · ${new Date(created_at).toLocaleString()}</div></div>
+                    <button class="btn btn-secondary" onclick="showAdminDashboard()" style="width:auto;padding:8px 20px;font-size:14px;">← 返回列表</button>
+                </div>
+                <div style="text-align:center;margin:8px 0;">
+                    <span class="type-badge" style="font-size:20px;">${typeKey}</span>
+                    <div class="type-desc">${typeName}</div>
+                </div>
+                ${jobHtml}
+                <div class="result-grid">
+            `;
+            for (let d of dimOrder) {
+                let s=scores[d], lv=levels[d];
+                let lvClass=lv==='高'?'level-high':lv==='中'?'level-mid':'level-low';
+                html+=`<div class="result-item"><div class="dim">${dimLabels[d]}</div><div class="score">${s}</div><div class="level ${lvClass}">${lv}</div></div>`;
+            }
+            html+=`</div>`;
+
+            if (passRate<70) {
+                html+=`<div class="consistency-warn"><strong>⚠️ 一致性偏低 (通过率：${passRate}%，${cons.passed}/${cons.total})</strong><br>`;
+                if (middleCount>10) html+=`🔸 中性回答 (3分) 共 ${middleCount} 次，可能影响结果区分度。<br>`;
+                let conflictItems=[];
+                for (let item of (cons.details||[])) { if (!item.ok) conflictItems.push(`第${item.q1}题与第${item.q2}题`); }
+                if (conflictItems.length>0) html+=`🔸 存在矛盾配对：${conflictItems.join('、')}`;
+                html+=`</div>`;
+            } else if (middleCount>10) {
+                html+=`<div class="consistency-warn"><strong>⚠️ 中性回答较多 (通过率：${passRate}%)</strong><br>您选择了 ${middleCount} 次"一般"，可能导致结果趋于居中。</div>`;
+            } else {
+                html+=`<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
+            }
+
+            if (fastQuestions.length>0) {
+                let qList=fastQuestions.join('、');
+                html+=`<div class="warning-box"><strong>⚠️ 秒选警告</strong><br>🚨 以下题目答题耗时过短（<3秒），可能存在秒选：<strong>第${qList}题</strong><br>📊 平均每题耗时：<strong>${avgDur} 秒</strong>（正常参考值：5-10秒/题）</div>`;
+            }
+
+            let issues = qualityIssues || [];
+            if (issues.length>0) {
+                html+=`<div class="quality-summary"><h3>📌 作答质量异常检测</h3><ul>`;
+                for (let issue of issues) {
+                    html+=`<li><span class="quality-fail">❌ ${issue.type}</span>：${issue.detail}</li>`;
+                }
+                html+=`</ul></div>`;
+            } else {
+                html+=`<div class="quality-summary" style="border-color:#c3e6cb; background:#d4edda;"><h3 style="color:#155724;">✅ 作答质量良好</h3><p style="margin:0;font-size:14px;">未检测到直线作答、规律性点选或极端社会赞许性等异常。</p></div>`;
+            }
+
+            html+=`
+                <div style="margin-top:16px;">
+                    <button class="btn btn-secondary" onclick="toggleDetailAnswers()" style="width:auto;padding:8px 20px;font-size:14px;">📋 查看全部答题（含耗时）</button>
+                    <div id="detail-answers-wrap" style="display:none;margin-top:12px;max-height:500px;overflow-y:auto;background:#f8fafd;border-radius:16px;padding:16px;">
+                        <table style="width:100%;font-size:13px;border-collapse:collapse;">
+                            <tr><th style="text-align:left;padding:4px 6px;">题号</th><th style="text-align:left;padding:4px 6px;">题目</th><th style="text-align:center;padding:4px 6px;">得分</th><th style="text-align:center;padding:4px 6px;">耗时 (秒)</th><th style="text-align:center;padding:4px 6px;">维度</th></tr>
+            `;
+            for (let i=0; i<QUESTIONS.length; i++) {
+                let q=QUESTIONS[i], detail=details[i]||{};
+                let val=detail.score!==undefined?detail.score:(answers?answers[i]:'-');
+                let dur=detail.duration||0;
+                let seconds=(dur/1000).toFixed(1);
+                let bg=val===3?'background:#fff4e0;':'';
+                if (dur>0 && dur<3000) bg='background:#ffe0e0 !important;';
+                html+=`<tr style="${bg}">
+                    <td style="padding:3px 6px;">${q.id}</td>
+                    <td style="padding:3px 6px;">${q.text}</td>
+                    <td style="text-align:center;padding:3px 6px;font-weight:600;">${val}</td>
+                    <td style="text-align:center;padding:3px 6px;">${seconds}s</td>
+                    <td style="text-align:center;padding:3px 6px;font-size:12px;color:#6b7a8d;">${q.dim}</td>
+                </tr>`;
+            }
+            html+=`</table></div></div>`;
+            pageAdminDetail.innerHTML=html;
+        }
+
+        window.toggleDetailAnswers = function() {
+            let wrap=document.getElementById('detail-answers-wrap');
+            if (wrap) wrap.style.display = wrap.style.display==='none'?'block':'none';
+        };
+
+        window.exportData = function() {
+            let records=getRecords();
+            if (!records.length) { alert('暂无数据可导出'); return; }
+            let headers=['ID','姓名','出生年月','时间','E','A','C','N','O','类型','一致性通过率','中性回答数','平均每题耗时(s)','质量异常'];
+            let rows=[headers];
+            for (let r of records) {
+                let s=r.scores||{}, cons=r.consistency||{passed:0,total:0};
+                let rate=cons.total?Math.round(cons.passed/cons.total*100):0;
+                let durations=r.answerDurations||[];
+                let avgDur=durations.length?(durations.reduce((a,b)=>a+b,0)/durations.length/1000).toFixed(1):'-';
+                let issues=(r.qualityIssues||[]).map(i=>i.type).join('; ')||'无';
+                rows.push([r.id, r.name, r.birth||'', new Date(r.created_at).toLocaleString(),
+                    s.E||'', s.A||'', s.C||'', s.N||'', s.O||'',
+                    r.typeKey||'', rate+'%', r.middleCount||0, avgDur, issues]);
+            }
+            let csv=rows.map(row=>row.join(',')).join('\n');
+            let blob=new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+            let link=document.createElement('a');
+            link.href=URL.createObjectURL(blob);
+            link.download=`个人特质测试数据_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+        };
+
+        // ===================== 初始化 =====================
+        if (window.location.search.includes('admin')) {
+            showAdminLogin();
+        } else {
+            renderTest();
+        }
+
+        document.addEventListener('keydown', function(e){
+            if (e.key==='ArrowLeft') { if (!pageTest.classList.contains('hidden')) window.prevQuestion&&window.prevQuestion(); }
+            else if (e.key==='ArrowRight') { if (!pageTest.classList.contains('hidden')) window.nextQuestion&&window.nextQuestion(); }
+        });
+        console.log('🧠 个人特质测试已加载 (完整版，手动提交，带删除功能)');
+        console.log('📊 后台入口: 在URL后添加 ?admin');
+    </script>
+</body>
+</html>
