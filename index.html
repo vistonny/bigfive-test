@@ -124,10 +124,13 @@
     </div>
 
     <script>
-        // ===================== 配置 =====================
-        const ADMIN_PASSWORD = '88192283';
+        // ===================== 配置 Supabase =====================
+        // 🔴 请将下面的 URL 和 anon 密钥替换为你自己的 Supabase 项目值
+        const SUPABASE_URL = 'https://https://baapafvkictafswvltlz.supabase.co';   // 例如：https://abcdefg.supabase.co
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYXBhZnZraWN0YWZzd3ZsdGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjQ2NjksImV4cCI6MjEwMzcwMDY2OX0._P8E24ilqzsO-8rISV436jSvskHBRoQqfTA102Vrecs';   // 例如：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-        // ===================== 问卷数据（50题） =====================
+        // ===================== 静态数据定义 =====================
+        const ADMIN_PASSWORD = '88192283';
         const QUESTIONS = [
             { id:1, text:"我是聚会中的焦点。", dim:"E", dir:"+" },
             { id:2, text:"我对他人很少关心。", dim:"A", dir:"-" },
@@ -180,7 +183,6 @@
             { id:49, text:"我经常感到忧郁。", dim:"N", dir:"+" },
             { id:50, text:"我充满创意。", dim:"O", dir:"+" }
         ];
-
         const DIM_KEYS = ['E','A','C','N','O'];
         const DIM_NAMES = { E:"外向性", A:"宜人性", C:"尽责性", N:"情绪稳定性", O:"开放性" };
         const TYPE_MAP = {
@@ -224,8 +226,6 @@
             [4,9],[14,19],[24,29],[34,39],[44,49],
             [5,10],[15,20],[25,30],[35,40],[45,50]
         ];
-
-        // ===================== 岗位数据库（9个岗位） =====================
         const JOB_DB = [
             { name: '销售代表', category: '市场类', e: 5, a: 4, c: 3, n: 4, o: 3 },
             { name: '跟单员', category: '市场类', e: 3, a: 4, c: 4, n: 4, o: 3 },
@@ -237,10 +237,8 @@
             { name: '采购', category: '职能支持类', e: 4, a: 4, c: 4, n: 4, o: 3 },
             { name: '生产计划', category: '职能支持类', e: 3, a: 3, c: 5, n: 4, o: 3 }
         ];
-
         // ===================== 工具函数 =====================
         function getDimItems(dim) { return QUESTIONS.filter(q=>q.dim===dim); }
-
         function calcScores(answers) {
             let scores={}, levels={}, raw={};
             for (let d of DIM_KEYS) {
@@ -255,7 +253,6 @@
             }
             return {scores, levels, raw};
         }
-
         function getTypeKey(levels) { let key=''; for(let d of DIM_KEYS) key+=(levels[d]==='高'?'H':'L'); return key; }
         function getTypeName(key) {
             for(let [k,v] of Object.entries(TYPE_MAP)) if(k.replace(/\s/g,'')===key) return v;
@@ -265,7 +262,6 @@
             }
             return key+" (未定义类型)";
         }
-
         function checkConsistency(answers) {
             let passed=0, details=[];
             for(let [id1,id2] of CONSISTENCY_PAIRS) {
@@ -276,9 +272,7 @@
             }
             return {total:details.length, passed, details};
         }
-
         function countMiddleAnswers(answers) { let c=0; for(let a of answers) if(a===3) c++; return c; }
-
         function detectQualityIssues(answers) {
             let issues = [];
             let scores = answers.filter(a => a !== null && a !== undefined);
@@ -297,7 +291,6 @@
             if (extremeCount > 30) issues.push({ type: '极端社会赞许性', detail: `选"非常不符合(1)"或"非常符合(5)"共 ${extremeCount} 题（>30），可能存在刻意美化或贬低。` });
             return issues;
         }
-
         function getJobRecommendations(typeKey) {
             const dims = typeKey.split('').map(ch => ch === 'H');
             const dimNames = ['e','a','c','n','o'];
@@ -317,33 +310,91 @@
             return { recommended, notRecommended };
         }
 
-        // ===================== 存储 =====================
-        function saveRecord(data) {
-            try {
-                let records = JSON.parse(localStorage.getItem('bigfive_records') || '[]');
-                let record = {
-                    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
-                    created_at: new Date().toISOString(),
-                    ...data
-                };
-                records.push(record);
-                localStorage.setItem('bigfive_records', JSON.stringify(records));
-                return record;
-            } catch (e) {
-                console.error('保存失败:', e);
-                return null;
+        // ===================== Supabase 客户端初始化 =====================
+        let supabaseClient = null;
+        function initSupabase() {
+            if (typeof supabase === 'undefined') {
+                console.warn('Supabase JS 库未加载，等待中...');
+                return false;
             }
+            const { createClient } = supabase;
+            supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('Supabase 客户端初始化成功');
+            return true;
         }
 
-        function getRecords(){ return JSON.parse(localStorage.getItem('bigfive_records') || '[]'); }
-        function getRecord(id){ return getRecords().find(r=>r.id===id)||null; }
+        // ===================== 数据操作函数（Supabase） =====================
+        async function saveRecord(data) {
+            if (!supabaseClient) { alert('数据库未连接，请刷新重试'); return null; }
+            try {
+                const { data: inserted, error } = await supabaseClient
+                    .from('records')
+                    .insert([{
+                        name: data.name,
+                        birth: data.birth,
+                        answers: data.answers,
+                        answer_durations: data.answerDurations,
+                        answers_detail: data.answersDetail,
+                        scores: data.scores,
+                        levels: data.levels,
+                        raw: data.raw,
+                        type_key: data.typeKey,
+                        type_name: data.typeName,
+                        consistency: data.consistency,
+                        middle_count: data.middleCount,
+                        quality_issues: data.qualityIssues
+                    }])
+                    .select();
+                if (error) { console.error('Supabase 插入错误:', error); alert('数据保存失败，请重试'); return null; }
+                return inserted[0];
+            } catch (e) { console.error(e); alert('保存出错'); return null; }
+        }
 
-        // ===================== 页面逻辑 =====================
-        const pageTest=document.getElementById('page-test');
-        const pageSuccess=document.getElementById('page-success');
-        const pageAdmin=document.getElementById('page-admin');
-        const pageAdminDetail=document.getElementById('page-admin-detail');
-        const pageAdminLogin=document.getElementById('page-admin-login');
+        async function getRecords() {
+            if (!supabaseClient) return [];
+            try {
+                const { data, error } = await supabaseClient
+                    .from('records')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) { console.error(error); return []; }
+                return data || [];
+            } catch (e) { console.error(e); return []; }
+        }
+
+        async function getRecord(id) {
+            if (!supabaseClient) return null;
+            try {
+                const { data, error } = await supabaseClient
+                    .from('records')
+                    .select('*')
+                    .eq('id', id)
+                    .single();
+                if (error) return null;
+                return data;
+            } catch (e) { return null; }
+        }
+
+        async function deleteRecord(id) {
+            if (!confirm('确定要删除这条记录吗？')) return;
+            if (!supabaseClient) return alert('数据库未连接');
+            try {
+                const { error } = await supabaseClient
+                    .from('records')
+                    .delete()
+                    .eq('id', id);
+                if (error) { alert('删除失败'); return; }
+                alert('已删除');
+                renderAdmin();
+            } catch (e) { alert('删除出错'); }
+        }
+
+        // ===================== 页面状态 =====================
+        const pageTest = document.getElementById('page-test');
+        const pageSuccess = document.getElementById('page-success');
+        const pageAdmin = document.getElementById('page-admin');
+        const pageAdminDetail = document.getElementById('page-admin-detail');
+        const pageAdminLogin = document.getElementById('page-admin-login');
 
         let state = {
             started: false, currentQ: 0, answers: new Array(50).fill(null),
@@ -357,7 +408,6 @@
             if (parts.length===2) return parts[0]+'年'+parts[1]+'月';
             return birthStr;
         }
-
         function getYearOptions(selected) {
             const cur = new Date().getFullYear();
             let html='';
@@ -375,6 +425,7 @@
             return html;
         }
 
+        // ===================== 渲染函数 =====================
         function renderTest() {
             pageTest.classList.remove('hidden');
             pageSuccess.classList.add('hidden');
@@ -480,12 +531,10 @@
             if (start>0) state.answerDurations[state.currentQ]=Date.now()-start;
             state.answers[state.currentQ]=val;
             renderTest();
-            // 如果还没全部答完，自动前进到下一题
             if (!state.answers.every(a=>a!==null) && state.currentQ < QUESTIONS.length-1) {
                 state.currentQ++;
                 renderTest();
             }
-            // 如果全部答完，停留在当前页面（显示提交按钮）
         };
 
         window.prevQuestion = function() {
@@ -500,32 +549,11 @@
             }
         };
 
-        function submitTest() {
-            if (state.submitted) {
-                console.log('已经提交过，忽略');
-                return;
-            }
-            let allAnswered = state.answers.every(a => a !== null);
-            if (!allAnswered) {
-                alert('请完成所有题目');
-                return;
-            }
+        // ===================== 提交与成功 =====================
+        async function submitTest() {
+            if (state.submitted) return;
+            if (!state.answers.every(a=>a!==null)) { alert('请完成所有题目'); return; }
             state.submitted = true;
-
-            // 防重复提交（30秒内相同姓名+出生年月）
-            try {
-                let records = JSON.parse(localStorage.getItem('bigfive_records') || '[]');
-                let last = records.length > 0 ? records[records.length - 1] : null;
-                if (last && last.name === state.name && last.birth === state.birth) {
-                    let lastTime = new Date(last.created_at).getTime();
-                    let now = Date.now();
-                    if (now - lastTime < 30000) {
-                        console.warn('检测到重复提交，已忽略');
-                        renderSuccess();
-                        return;
-                    }
-                }
-            } catch (e) {}
 
             let {scores, levels, raw} = calcScores(state.answers);
             let typeKey = getTypeKey(levels);
@@ -535,7 +563,7 @@
             let answersDetail = state.answers.map((score,idx)=>({questionId:idx+1, score, duration:state.answerDurations[idx]||0}));
             let qualityIssues = detectQualityIssues(state.answers);
 
-            let record = saveRecord({
+            let recordData = {
                 name: state.name,
                 birth: state.birth,
                 answers: state.answers.slice(),
@@ -549,13 +577,15 @@
                 consistency,
                 middleCount,
                 qualityIssues
-            });
-            if (record) {
-                state.recordId = record.id;
+            };
+
+            let inserted = await saveRecord(recordData);
+            if (inserted) {
+                state.recordId = inserted.id;
                 renderSuccess();
             } else {
-                alert('数据保存失败，请检查浏览器控制台错误');
                 state.submitted = false;
+                alert('保存失败，请检查网络');
             }
         }
 
@@ -582,7 +612,7 @@
             renderTest();
         };
 
-        // ===================== 管理后台（含删除功能） =====================
+        // ===================== 管理后台 =====================
         function showAdminLogin() {
             pageTest.classList.add('hidden');
             pageSuccess.classList.add('hidden');
@@ -627,11 +657,11 @@
             }
         };
 
-        function showAdminDashboard() {
+        async function showAdminDashboard() {
             pageAdminLogin.classList.add('hidden');
             pageAdmin.classList.remove('hidden');
             pageAdminDetail.classList.add('hidden');
-            renderAdmin();
+            await renderAdmin();
         }
 
         window.showAdmin = function() {
@@ -639,8 +669,8 @@
             else showAdminLogin();
         };
 
-        function renderAdmin() {
-            let records = getRecords();
+        async function renderAdmin() {
+            let records = await getRecords();
             let html = `
                 <div class="header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                     <div><h1>📋 管理后台</h1><div class="sub">共 ${records.length} 条测试记录</div></div>
@@ -658,11 +688,11 @@
                 return;
             }
             html += `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>姓名</th><th>出生年月</th><th>时间</th><th>E</th><th>A</th><th>C</th><th>N</th><th>O</th><th>类型</th><th>一致性</th><th>操作</th></tr></thead><tbody>`;
-            let sorted = [...records].reverse();
+            let sorted = [...records];
             for (let r of sorted) {
                 let s = r.scores || {}, cons = r.consistency || { passed: 0, total: 0 };
                 let consRate = cons.total ? Math.round(cons.passed / cons.total * 100) : 0;
-                let warn = consRate < 70 ? '🔴' : (r.middleCount > 10 ? '🟡' : '🟢');
+                let warn = consRate < 70 ? '🔴' : (r.middle_count > 10 ? '🟡' : '🟢');
                 let time = new Date(r.created_at).toLocaleString();
                 let birthDisplay = r.birth ? formatBirth(r.birth) : '未提供';
                 html += `<tr>
@@ -670,7 +700,7 @@
                     <td style="font-size:13px;color:#4a5a6a;">${birthDisplay}</td>
                     <td style="font-size:12px;color:#6b7a8d;">${time}</td>
                     <td>${s.E||'-'}</td><td>${s.A||'-'}</td><td>${s.C||'-'}</td><td>${s.N||'-'}</td><td>${s.O||'-'}</td>
-                    <td style="font-weight:600;font-size:13px;">${r.typeKey||'-'}</td>
+                    <td style="font-weight:600;font-size:13px;">${r.type_key||'-'}</td>
                     <td>${warn} ${consRate}%</td>
                     <td>
                         <button class="btn btn-secondary" onclick="viewDetail('${r.id}')" style="width:auto;padding:4px 10px;font-size:12px;">查看</button>
@@ -682,25 +712,14 @@
             pageAdmin.innerHTML = html;
         }
 
-        window.deleteRecord = function(id) {
-            if (!confirm('确定要删除这条记录吗？')) return;
-            let records = getRecords();
-            let index = records.findIndex(r => r.id === id);
-            if (index === -1) { alert('记录不存在'); return; }
-            records.splice(index, 1);
-            localStorage.setItem('bigfive_records', JSON.stringify(records));
-            alert('已删除');
-            renderAdmin();
-        };
-
         window.logoutAdmin = function() {
             sessionStorage.removeItem('admin_logged_in');
             alert('已退出管理后台');
             resetTest();
         };
 
-        window.viewDetail = function(id) {
-            let record = getRecord(id);
+        window.viewDetail = async function(id) {
+            let record = await getRecord(id);
             if (!record) { alert('记录不存在'); return; }
             pageAdmin.classList.add('hidden');
             pageAdminDetail.classList.remove('hidden');
@@ -708,7 +727,21 @@
         };
 
         function renderDetail(record) {
-            let {scores, levels, typeKey, typeName, consistency, answers, answerDurations, answersDetail, name, birth, created_at, middleCount, qualityIssues} = record;
+            // 由于数据字段名与之前略有不同（下划线分隔），需适配
+            let scores = record.scores || {};
+            let levels = record.levels || {};
+            let typeKey = record.type_key || '';
+            let typeName = record.type_name || '';
+            let consistency = record.consistency || { passed: 0, total: 0 };
+            let answers = record.answers || [];
+            let answerDurations = record.answer_durations || [];
+            let answersDetail = record.answers_detail || [];
+            let name = record.name || '';
+            let birth = record.birth || '';
+            let created_at = record.created_at || '';
+            let middleCount = record.middle_count || 0;
+            let qualityIssues = record.quality_issues || [];
+
             let dimOrder=['E','A','C','N','O'];
             let dimLabels={E:'外向性',A:'宜人性',C:'尽责性',N:'情绪稳定性',O:'开放性'};
             let jobRec = getJobRecommendations(typeKey);
@@ -832,20 +865,20 @@
             if (wrap) wrap.style.display = wrap.style.display==='none'?'block':'none';
         };
 
-        window.exportData = function() {
-            let records=getRecords();
+        async function exportData() {
+            let records = await getRecords();
             if (!records.length) { alert('暂无数据可导出'); return; }
             let headers=['ID','姓名','出生年月','时间','E','A','C','N','O','类型','一致性通过率','中性回答数','平均每题耗时(s)','质量异常'];
             let rows=[headers];
             for (let r of records) {
                 let s=r.scores||{}, cons=r.consistency||{passed:0,total:0};
                 let rate=cons.total?Math.round(cons.passed/cons.total*100):0;
-                let durations=r.answerDurations||[];
+                let durations=r.answer_durations||[];
                 let avgDur=durations.length?(durations.reduce((a,b)=>a+b,0)/durations.length/1000).toFixed(1):'-';
-                let issues=(r.qualityIssues||[]).map(i=>i.type).join('; ')||'无';
+                let issues=(r.quality_issues||[]).map(i=>i.type).join('; ')||'无';
                 rows.push([r.id, r.name, r.birth||'', new Date(r.created_at).toLocaleString(),
                     s.E||'', s.A||'', s.C||'', s.N||'', s.O||'',
-                    r.typeKey||'', rate+'%', r.middleCount||0, avgDur, issues]);
+                    r.type_key||'', rate+'%', r.middle_count||0, avgDur, issues]);
             }
             let csv=rows.map(row=>row.join(',')).join('\n');
             let blob=new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
@@ -854,20 +887,47 @@
             link.download=`个人特质测试数据_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
             URL.revokeObjectURL(link.href);
-        };
-
-        // ===================== 初始化 =====================
-        if (window.location.search.includes('admin')) {
-            showAdminLogin();
-        } else {
-            renderTest();
         }
 
-        document.addEventListener('keydown', function(e){
-            if (e.key==='ArrowLeft') { if (!pageTest.classList.contains('hidden')) window.prevQuestion&&window.prevQuestion(); }
-            else if (e.key==='ArrowRight') { if (!pageTest.classList.contains('hidden')) window.nextQuestion&&window.nextQuestion(); }
-        });
-        console.log('🧠 个人特质测试已加载 (完整版，手动提交，带删除功能)');
+        // ===================== 初始化 =====================
+        // 等待 Supabase 库加载完成
+        let supabaseLoaded = false;
+        function waitForSupabase(callback) {
+            if (typeof supabase !== 'undefined') {
+                supabaseLoaded = initSupabase();
+                if (supabaseLoaded) callback();
+                else setTimeout(() => waitForSupabase(callback), 300);
+            } else {
+                setTimeout(() => waitForSupabase(callback), 300);
+            }
+        }
+
+        // 加载 Supabase JS 库
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+        document.head.appendChild(script);
+        script.onload = function() {
+            initSupabase();
+            // 判断后台模式
+            if (window.location.search.includes('admin')) {
+                showAdminLogin();
+            } else {
+                renderTest();
+            }
+        };
+        // 如果库加载失败，10秒后尝试直接初始化
+        setTimeout(() => {
+            if (!supabaseClient && typeof supabase !== 'undefined') {
+                initSupabase();
+                if (window.location.search.includes('admin')) {
+                    showAdminLogin();
+                } else {
+                    renderTest();
+                }
+            }
+        }, 10000);
+
+        console.log('🧠 个人特质测试已加载 (Supabase 云存储版)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
     </script>
 </body>
