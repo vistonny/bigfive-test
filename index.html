@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>个人特质测试</title>
     <style>
-        /* ===== 原有全局样式 + 新增制造企业风格 ===== */
+        /* ===== 全局样式 ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; color: #1a2332; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
         .container { max-width: 800px; width: 100%; background: #ffffff; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10); padding: 40px 36px 32px; transition: all 0.2s; }
@@ -54,7 +54,7 @@
         .success-title { font-size:24px; font-weight:700; text-align:center; color:#0b1a2e; }
         .success-desc { text-align:center; color:#6b7a8d; margin:8px 0 24px; font-size:16px; }
         .admin-table-wrap { overflow-x:auto; margin-top:16px; }
-        .admin-table { width:100%; border-collapse:collapse; font-size:14px; min-width:900px; }
+        .admin-table { width:100%; border-collapse:collapse; font-size:14px; min-width:800px; }
         .admin-table th { background:#f0f4fa; padding:10px 12px; text-align:left; font-weight:600; color:#1a2a3a; border-bottom:2px solid #dce2ec; white-space:nowrap; }
         .admin-table td { padding:10px 12px; border-bottom:1px solid #e8edf5; vertical-align:middle; }
         .admin-table tr:hover td { background:#f8fafd; }
@@ -85,8 +85,6 @@
         .level-high { background:#e1f7e8; color:#0d6e3a; }
         .level-mid { background:#fff4e0; color:#a5650a; }
         .level-low { background:#fde8e8; color:#b13a3a; }
-        .type-badge { display:inline-block; background:#0b1a2e; color:#fff; padding:8px 24px; border-radius:30px; font-size:18px; font-weight:700; margin:12px 0 6px; }
-        .type-desc { font-size:15px; color:#2c3e50; margin-top:4px; text-align:center; }
         .admin-login-box { max-width:380px; margin:40px auto; padding:30px 24px; background:#f8fafd; border-radius:20px; text-align:center; }
         .admin-login-box h2 { font-size:20px; margin-bottom:16px; }
         .admin-login-box input { width:100%; padding:12px; border:1.5px solid #dce2ec; border-radius:12px; font-size:16px; margin-bottom:12px; outline:none; }
@@ -107,7 +105,7 @@
         .quality-fail { color:#b13a3a; font-weight:bold; }
         .birth-display { font-size:14px; color:#4a5a6a; }
 
-        /* ===== 新增制造企业报告样式 ===== */
+        /* ===== 制造企业报告样式 ===== */
         .report-section { background: rgba(255,255,255,0.06); border-radius: 16px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; background: #f8fafd; }
         .report-section h3 { font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #0b1a2e; }
         .score-table { width: 100%; border-collapse: collapse; font-size: 14px; }
@@ -148,7 +146,6 @@
 
     <script>
         // ===================== 配置 Supabase =====================
-        // 🔴 请将下面的 URL 和 anon 密钥替换为你自己的 Supabase 项目值
         const SUPABASE_URL = 'https://baapafvkictafswvltlz.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYXBhZnZraWN0YWZzd3ZsdGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjQ2NjksImV4cCI6MjEwMzcwMDY2OX0._P8E24ilqzsO-8rISV436jSvskHBRoQqfTA102Vrecs';
 
@@ -208,40 +205,7 @@
         ];
         const DIM_KEYS = ['E','A','C','N','O'];
         const DIM_NAMES = { E:"外向性", A:"宜人性", C:"尽责性", N:"情绪稳定性", O:"开放性" };
-        const TYPE_MAP = {
-            "HHHHL":"全能领袖型 (魅力＋合作＋自律＋情绪稳＋创新)",
-            "HHHLL":"传统队长型 (外向、可靠、亲和、保守)",
-            "HHHHH":"高压创意总监 (高能量＋完美主义＋易焦虑)",
-            "HHHHL":"操心组织者 (热心、规矩、神经紧绷)",
-            "HHLHH":"社交梦想家 (点子多、执行力弱、好相处)",
-            "HHLHL":"随和玩家 (爱热闹、不较真、随性)",
-            "HHLHH":"情绪波动艺术家 (外向、敏感、创意、散漫)",
-            "HHLHL":"焦虑话痨好人 (热心、担忧、拖延)",
-            "HLHLH":"进取开拓者 (果断、自律、求新、不迁就)",
-            "HLHLL":"传统硬汉经理 (外向、守纪、强硬、务实)",
-            "HLHHH":"高压创新领袖 (雄心、焦虑、掌控、开放)",
-            "HLHHL":"紧张控制者 (强势、细节控、神经质)",
-            "HLLHH":"冒险创业家 (冲劲、点子多、无条理、冷漠)",
-            "HLLHL":"魅力销售王 (能说会道、粗放、自我中心)",
-            "HLLHH":"波动叛逆者 (外向、不安、冲动、前卫)",
-            "HLLHL":"冲动支配者 (暴躁、随性、自我)",
-            "LHH LH":"安静策划者 (内向、可靠、温和、创新)",
-            "LHHLL":"幕后守护者 (低调、守规矩、亲切、保守)",
-            "LHHHH":"谨慎完美主义者 (内向、焦虑、负责、创意)",
-            "LHHHL":"担忧支援者 (内向、规矩、体贴、易紧张)",
-            "LHLHH":"佛系梦想家 (内向、随性、友善、好奇)",
-            "LHLHL":"温和懒人 (好相处、不主动、无计划)",
-            "LHLHH":"敏感诗人 (内向、焦虑、亲和、创意)",
-            "LHLHL":"社恐老好人 (害羞、担忧、体贴)",
-            "LLHLH":"冷面专家 (内向、自律、理性、求新)",
-            "LLHLL":"技术工匠 (内向、严谨、务实、不社交)",
-            "LLHHH":"焦虑天才 (内向、完美、神经质、创意)",
-            "LLHHL":"紧张技术控 (内向、细节控、忧虑、保守)",
-            "LL LHH":"孤僻思想家 (内向、随性、冷漠、好奇)",
-            "LLLLL":"隐士懒人 (低能量、低合作、低规划、低兴趣)",
-            "LLLHH":"边缘艺术家 (内向、冲动、焦虑、前卫)",
-            "LLLHL":"退缩暴躁者 (孤僻、懒散、易怒)"
-        };
+        // TYPE_MAP 已完全移除，类型识别不再使用
         const CONSISTENCY_PAIRS = [
             [1,6],[11,16],[21,26],[31,36],[41,46],
             [2,7],[12,17],[22,27],[32,37],
@@ -266,23 +230,7 @@
             }
             return {scores, levels, raw};
         }
-        function getTypeKey(levels) {
-            let key='';
-            for(let d of DIM_KEYS) {
-                if(levels[d]==='高') key+='H';
-                else if(levels[d]==='中') key+='M';
-                else key+='L';
-            }
-            return key;
-        }
-        function getTypeName(key) {
-            for(let [k,v] of Object.entries(TYPE_MAP)) if(k.replace(/\s/g,'')===key) return v;
-            for(let [k,v] of Object.entries(TYPE_MAP)) {
-                let cleanK=k.replace(/\s/g,'');
-                if(cleanK.length===5 && cleanK[0]===key[0] && cleanK[1]===key[1] && cleanK[2]===key[2] && cleanK[3]===key[3] && cleanK[4]===key[4]) return v;
-            }
-            return key+" (未定义类型)";
-        }
+        // getTypeKey 和 getTypeName 已移除，不再使用
         function checkConsistency(answers) {
             let passed=0, details=[];
             for(let [id1,id2] of CONSISTENCY_PAIRS) {
@@ -313,7 +261,7 @@
             return issues;
         }
 
-        // ===================== 新增制造企业分析函数（从新附件移植） =====================
+        // ===================== 制造企业分析函数 =====================
         function normCDF(z) {
             return 0.5 * (1 + Math.tanh(z * Math.sqrt(2 / Math.PI) * (1 + 0.044715 * z * z)));
         }
@@ -453,7 +401,7 @@
                 </div>`;
             }
         }
-        // 雷达图绘制（移植自新附件）
+        // 雷达图绘制
         function drawRadar(canvas, scores) {
             const ctx = canvas.getContext('2d');
             const w = canvas.width, h = canvas.height;
@@ -464,7 +412,6 @@
             const colors = ['#fd79a8','#55efc4','#ffeaa7','#74b9ff','#4ecdc4'];
             ctx.clearRect(0,0,w,h);
 
-            // 网格
             for (let i=1; i<=5; i++) {
                 const r = (radius/5)*i;
                 ctx.beginPath();
@@ -483,7 +430,6 @@
                 ctx.font = '10px sans-serif';
                 ctx.fillText((i*10).toString(), cx + r*Math.cos(labelAngle)+5, cy + r*Math.sin(labelAngle));
             }
-            // 轴线与标签
             for (let j=0; j<5; j++) {
                 const angle = (Math.PI*2/5)*j - Math.PI/2;
                 ctx.beginPath();
@@ -501,7 +447,6 @@
                 ctx.font = '11px sans-serif';
                 ctx.fillText(dims[j], cx + lr*Math.cos(angle), cy + lr*Math.sin(angle)+14);
             }
-            // 30分参考线
             ctx.beginPath();
             for (let j=0; j<5; j++) {
                 const angle = (Math.PI*2/5)*j - Math.PI/2;
@@ -516,7 +461,6 @@
             ctx.setLineDash([5,5]);
             ctx.stroke();
             ctx.setLineDash([]);
-            // 数据区域
             ctx.beginPath();
             for (let j=0; j<5; j++) {
                 const angle = (Math.PI*2/5)*j - Math.PI/2;
@@ -533,7 +477,6 @@
             ctx.strokeStyle = '#00d4ff';
             ctx.lineWidth = 2.5;
             ctx.stroke();
-            // 数据点
             for (let j=0; j<5; j++) {
                 const angle = (Math.PI*2/5)*j - Math.PI/2;
                 const val = scores[dims[j]];
@@ -581,8 +524,7 @@
                         scores: data.scores,
                         levels: data.levels,
                         raw: data.raw,
-                        type_key: data.typeKey,
-                        type_name: data.typeName,
+                        // type_key 和 type_name 不再保存
                         consistency: data.consistency,
                         middle_count: data.middleCount,
                         quality_issues: data.qualityIssues
@@ -668,7 +610,7 @@
             return html;
         }
 
-        // 测试页面渲染（与之前一致）
+        // 测试页面渲染
         function renderTest() {
             pageTest.classList.remove('hidden');
             pageSuccess.classList.add('hidden');
@@ -792,15 +734,12 @@
             }
         };
 
-        // 提交（异步）
         async function submitTest() {
             if (state.submitted) return;
             if (!state.answers.every(a=>a!==null)) { alert('请完成所有题目'); return; }
             state.submitted = true;
 
             let {scores, levels, raw} = calcScores(state.answers);
-            let typeKey = getTypeKey(levels);
-            let typeName = getTypeName(typeKey);
             let consistency = checkConsistency(state.answers);
             let middleCount = countMiddleAnswers(state.answers);
             let answersDetail = state.answers.map((score,idx)=>({questionId:idx+1, score, duration:state.answerDurations[idx]||0}));
@@ -815,11 +754,10 @@
                 scores,
                 levels,
                 raw,
-                typeKey,
-                typeName,
                 consistency,
                 middleCount,
                 qualityIssues
+                // type_key 和 type_name 不再保存
             };
 
             let inserted = await saveRecord(recordData);
@@ -930,7 +868,7 @@
                 pageAdmin.innerHTML = html;
                 return;
             }
-            html += `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>姓名</th><th>出生年月</th><th>时间</th><th>E</th><th>A</th><th>C</th><th>N</th><th>O</th><th>类型</th><th>一致性</th><th>操作</th></tr></thead><tbody>`;
+            html += `<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>姓名</th><th>出生年月</th><th>时间</th><th>E</th><th>A</th><th>C</th><th>N</th><th>O</th><th>一致性</th><th>操作</th></tr></thead><tbody>`;
             let sorted = [...records];
             for (let r of sorted) {
                 let s = r.scores || {}, cons = r.consistency || { passed: 0, total: 0 };
@@ -943,7 +881,6 @@
                     <td style="font-size:13px;color:#4a5a6a;">${birthDisplay}</td>
                     <td style="font-size:12px;color:#6b7a8d;">${time}</td>
                     <td>${s.E||'-'}</td><td>${s.A||'-'}</td><td>${s.C||'-'}</td><td>${s.N||'-'}</td><td>${s.O||'-'}</td>
-                    <td style="font-weight:600;font-size:13px;">${r.type_key||'-'}</td>
                     <td>${warn} ${consRate}%</td>
                     <td>
                         <button class="btn btn-secondary" onclick="viewDetail('${r.id}')" style="width:auto;padding:4px 10px;font-size:12px;">查看</button>
@@ -969,13 +906,10 @@
             renderDetail(record);
         };
 
-        // ===================== 核心：详情页渲染（集成制造企业报告 + 保留质量检测） =====================
+        // ===================== 核心：详情页渲染（无类型） =====================
         function renderDetail(record) {
-            // 提取数据（字段映射）
+            // 提取数据
             let scores = record.scores || {};
-            let levels = record.levels || {};
-            let typeKey = record.type_key || '';
-            let typeName = record.type_name || '';
             let consistency = record.consistency || { passed: 0, total: 0 };
             let answers = record.answers || [];
             let answerDurations = record.answer_durations || [];
@@ -986,13 +920,11 @@
             let middleCount = record.middle_count || 0;
             let qualityIssues = record.quality_issues || [];
 
-            // 维度顺序
             const dimOrder = ['E','A','C','N','O'];
             const dimLabels = {E:'外向性', A:'宜人性', C:'尽责性', N:'情绪稳定性', O:'开放性'};
             const dimDescs = {E:'社交能量、活跃、自信', A:'合作、同理心、利他', C:'自律、可靠、目标导向', N:'情绪敏感、焦虑、压力反应', O:'好奇心、创新、接受新事物'};
-            const dimColors = {O:'#4ecdc4', C:'#ffeaa7', E:'#fd79a8', A:'#55efc4', N:'#74b9ff'};
 
-            // ---- 计算秒选题（阈值改为 2 秒） ----
+            // 秒选题（阈值2秒）
             let fastQuestions = [];
             let details = answersDetail || QUESTIONS.map((q,i)=>({questionId:q.id, score:answers?answers[i]:'-', duration:answerDurations?answerDurations[i]:0}));
             for (let d of details) {
@@ -1007,14 +939,12 @@
             let avgDur = validCount > 0 ? (totalDur / validCount / 1000).toFixed(1) : 0;
             let birthDisplay = birth ? formatBirth(birth) : '未提供';
 
-            // ---- 一致性数据 ----
             let cons = consistency || {passed:0, total:0};
             let passRate = cons.total ? Math.round(cons.passed / cons.total * 100) : 0;
 
-            // ---- 生成综合报告内容 ----
-            // 1. 雷达图（需要 Canvas）
             const canvasId = 'radarCanvas-' + Math.random().toString(36).slice(2,8);
-            // 2. 维度详情表
+
+            // 维度详情表
             let tableRows = '';
             dimOrder.forEach(d => {
                 let raw = scores[d] || 0;
@@ -1030,34 +960,20 @@
                 </tr>`;
             });
 
-            // 3. 核心特质
             let coreTraitsHtml = generateCoreTraits(scores);
-
-            // 4. 岗位匹配
             let jobMatchesHtml = generateJobMatches(scores);
-
-            // 5. 面试追问
             let interviewHtml = generateInterviewQuestions(scores);
-
-            // 6. 录用建议
             let verdictHtml = generateVerdict(scores);
 
-            // ---- 构建最终 HTML（先展示报告，后展示质量检测警告） ----
             let html = `
                 <div class="header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
                     <div><h1>📄 详细结果</h1><div class="sub">${name} · 出生: ${birthDisplay} · ${new Date(created_at).toLocaleString()}</div></div>
                     <button class="btn btn-secondary" onclick="showAdminDashboard()" style="width:auto;padding:8px 20px;font-size:14px;">← 返回列表</button>
                 </div>
-                <div style="text-align:center;margin:8px 0;">
-                    <span class="type-badge" style="font-size:20px;">${typeKey}</span>
-                    <div class="type-desc">${typeName}</div>
-                </div>
-                <!-- 雷达图 -->
                 <div class="report-section">
                     <h3 style="text-align:center;">📊 人格雷达图</h3>
                     <canvas id="${canvasId}" width="500" height="400" style="display:block; margin:0 auto; max-width:100%;"></canvas>
                 </div>
-                <!-- 维度详情 -->
                 <div class="report-section">
                     <h3>📋 维度得分详情</h3>
                     <table class="score-table">
@@ -1073,31 +989,26 @@
                         <tbody>${tableRows}</tbody>
                     </table>
                 </div>
-                <!-- 核心特质 -->
                 <div class="report-section">
                     <h3>🎯 核心人格特征</h3>
                     <div style="font-size:14px; line-height:1.8; color:#1a2332;">${coreTraitsHtml}</div>
                 </div>
-                <!-- 岗位匹配 -->
                 <div class="report-section">
                     <h3>💼 制造型企业岗位匹配分析</h3>
                     <div id="job-matches-container">${jobMatchesHtml}</div>
                 </div>
-                <!-- 面试追问 -->
                 <div class="report-section">
                     <h3>🎤 面试追问建议（制造场景）</h3>
                     <div>${interviewHtml}</div>
                 </div>
-                <!-- 录用建议 -->
                 <div class="report-section">
                     <h3>📌 综合录用建议</h3>
                     <div>${verdictHtml}</div>
                 </div>
             `;
 
-            // ---- 质量检测警告（保留原有功能） ----
+            // ---- 质量检测 ----
             let qualityWarnings = '';
-            // 一致性警告
             if (passRate < 70) {
                 qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 一致性偏低 (通过率：${passRate}%，${cons.passed}/${cons.total})</strong><br>`;
                 if (middleCount > 10) qualityWarnings += `🔸 中性回答 (3分) 共 ${middleCount} 次，可能影响结果区分度。<br>`;
@@ -1110,12 +1021,10 @@
             } else {
                 qualityWarnings += `<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
             }
-            // 秒选警告（阈值2秒）
             if (fastQuestions.length > 0) {
                 let qList = fastQuestions.join('、');
                 qualityWarnings += `<div class="warning-box"><strong>⚠️ 秒选警告</strong><br>🚨 以下题目答题耗时过短（<2秒），可能存在秒选：<strong>第${qList}题</strong><br>📊 平均每题耗时：<strong>${avgDur} 秒</strong>（正常参考值：5-10秒/题）</div>`;
             }
-            // 作答质量异常
             let issues = qualityIssues || [];
             if (issues.length > 0) {
                 qualityWarnings += `<div class="quality-summary"><h3>📌 作答质量异常检测</h3><ul>`;
@@ -1126,11 +1035,9 @@
             } else {
                 qualityWarnings += `<div class="quality-summary" style="border-color:#c3e6cb; background:#d4edda;"><h3 style="color:#155724;">✅ 作答质量良好</h3><p style="margin:0;font-size:14px;">未检测到直线作答、规律性点选或极端社会赞许性等异常。</p></div>`;
             }
-
-            // 将质量警告追加到报告之后
             html += `<div class="report-section"><h3>🔍 数据质量检测</h3>${qualityWarnings}</div>`;
 
-            // ---- 答题详情表格（保留） ----
+            // ---- 答题详情 ----
             html += `
                 <div style="margin-top:16px;">
                     <button class="btn btn-secondary" onclick="toggleDetailAnswers()" style="width:auto;padding:8px 20px;font-size:14px;">📋 查看全部答题（含耗时）</button>
@@ -1144,7 +1051,7 @@
                 let dur=detail.duration||0;
                 let seconds=(dur/1000).toFixed(1);
                 let bg=val===3?'background:#fff4e0;':'';
-                if (dur>0 && dur<2000) bg='background:#ffe0e0 !important;'; // 秒选标红（阈值2秒）
+                if (dur>0 && dur<2000) bg='background:#ffe0e0 !important;';
                 html+=`<tr style="${bg}">
                     <td style="padding:3px 6px;">${q.id}</td>
                     <td style="padding:3px 6px;">${q.text}</td>
@@ -1157,14 +1064,13 @@
 
             pageAdminDetail.innerHTML = html;
 
-            // ---- 渲染雷达图 ----
+            // 渲染雷达图
             setTimeout(() => {
                 const canvas = document.getElementById(canvasId);
                 if (canvas) drawRadar(canvas, scores);
             }, 100);
         }
 
-        // 辅助：维度解读
         function getDimComment(dim, raw) {
             const comments = {
                 O: raw >= 40 ? '思维活跃，喜欢创新' : raw >= 30 ? '能接受新方法，务实为主' : raw >= 20 ? '偏好传统，守规矩' : '抗拒变化，思维固化',
@@ -1185,7 +1091,7 @@
         async function exportData() {
             let records = await getRecords();
             if (!records.length) { alert('暂无数据可导出'); return; }
-            let headers=['ID','姓名','出生年月','时间','E','A','C','N','O','类型','一致性通过率','中性回答数','平均每题耗时(s)','质量异常'];
+            let headers=['ID','姓名','出生年月','时间','E','A','C','N','O','一致性通过率','中性回答数','平均每题耗时(s)','质量异常'];
             let rows=[headers];
             for (let r of records) {
                 let s=r.scores||{}, cons=r.consistency||{passed:0,total:0};
@@ -1195,7 +1101,7 @@
                 let issues=(r.quality_issues||[]).map(i=>i.type).join('; ')||'无';
                 rows.push([r.id, r.name, r.birth||'', new Date(r.created_at).toLocaleString(),
                     s.E||'', s.A||'', s.C||'', s.N||'', s.O||'',
-                    r.type_key||'', rate+'%', r.middle_count||0, avgDur, issues]);
+                    rate+'%', r.middle_count||0, avgDur, issues]);
             }
             let csv=rows.map(row=>row.join(',')).join('\n');
             let blob=new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
@@ -1207,7 +1113,6 @@
         }
 
         // ===================== 初始化 =====================
-        // 加载 Supabase 库
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
         document.head.appendChild(script);
@@ -1219,7 +1124,6 @@
                 renderTest();
             }
         };
-        // 备用：10秒后尝试
         setTimeout(() => {
             if (!supabaseClient && typeof supabase !== 'undefined') {
                 initSupabase();
@@ -1231,7 +1135,7 @@
             }
         }, 10000);
 
-        console.log('🧠 个人特质测试已加载 (制造企业版，含雷达图、岗位匹配、质量检测)');
+        console.log('🧠 个人特质测试已加载 (无类型显示，仅展示雷达图、岗位匹配、质量检测等)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
     </script>
 </body>
