@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>个人特质测试</title>
     <style>
+        /* ===== 原有全局样式 + 新增制造企业风格 ===== */
         * { margin:0; padding:0; box-sizing:border-box; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; color: #1a2332; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        .container { max-width: 680px; width: 100%; background: #ffffff; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10); padding: 40px 36px 32px; transition: all 0.2s; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif; background: #f0f2f5; color: #1a2332; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .container { max-width: 800px; width: 100%; background: #ffffff; border-radius: 32px; box-shadow: 0 20px 60px rgba(0, 20, 40, 0.10); padding: 40px 36px 32px; transition: all 0.2s; }
         .header { text-align: center; margin-bottom: 28px; }
         .header h1 { font-size: 26px; font-weight: 700; letter-spacing: 1px; color: #0b1a2e; }
         .header .sub { font-size: 15px; color: #7a8a9e; margin-top: 4px; font-weight: 400; letter-spacing: 0.3px; }
@@ -92,6 +93,7 @@
         .admin-login-box input:focus { border-color:#3b7cff; box-shadow:0 0 0 3px rgba(59,124,255,0.12); }
         .admin-login-box .btn { width:100%; }
         .admin-login-box .error { color:#b13a3a; font-size:14px; margin-top:8px; }
+        /* 秒选标红（阈值2秒） */
         .fast-answer { background:#ffe0e0 !important; }
         .fast-answer td { background:#ffe0e0 !important; }
         .warning-box { background:#fff3f3; border-left:4px solid #d32f2f; padding:14px 18px; border-radius:12px; margin:16px 0; font-size:14px; color:#7a1a1a; }
@@ -104,14 +106,35 @@
         .quality-pass { color:#2e7d32; }
         .quality-fail { color:#b13a3a; font-weight:bold; }
         .birth-display { font-size:14px; color:#4a5a6a; }
-        .job-recommend { background: #f0f7ff; border-radius: 16px; padding: 18px 22px; margin: 16px 0; }
-        .job-recommend .job-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; }
-        .job-recommend .job-list { display: flex; flex-wrap: wrap; gap: 8px 16px; }
-        .job-recommend .job-list .tag { background: #ffffff; padding: 4px 14px; border-radius: 20px; font-size: 14px; border: 1px solid #dce2ec; }
-        .job-recommend .job-list .tag.good { border-color: #2e7d32; background: #e8f5e9; color: #1e5a22; }
-        .job-recommend .job-list .tag.bad { border-color: #c62828; background: #ffebee; color: #a51a1a; }
-        .job-recommend .job-desc { font-size: 13px; color: #5a6a7e; margin-top: 4px; }
-        .job-recommend .warning-msg { background: #fff3cd; border:1px solid #ffc107; border-radius:8px; padding:8px 12px; margin-bottom:10px; font-size:14px; color:#856404; }
+
+        /* ===== 新增制造企业报告样式 ===== */
+        .report-section { background: rgba(255,255,255,0.06); border-radius: 16px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; background: #f8fafd; }
+        .report-section h3 { font-size: 16px; font-weight: 600; margin-bottom: 15px; color: #0b1a2e; }
+        .score-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .score-table th { text-align: left; padding: 10px; color: #4a5a6a; border-bottom: 1px solid #e8edf5; }
+        .score-table td { padding: 12px 10px; border-bottom: 1px solid #e8edf5; }
+        .score-table .dim-name { font-weight: 600; }
+        .score-table .dim-desc { font-size: 11px; color: #6b7a8d; }
+        .score-table .score-val { font-weight: 600; text-align: center; }
+        .score-table .level-tag { font-weight: 600; text-align: center; }
+        .score-table .comment { font-size: 12px; color: #5a6a7e; }
+        .job-card { display: flex; align-items: center; gap: 12px; padding: 12px 15px; background: #ffffff; border-radius: 10px; border-left: 4px solid; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .job-card .job-icon { font-size: 20px; }
+        .job-card .job-info { flex: 1; }
+        .job-card .job-name { font-weight: 600; font-size: 14px; }
+        .job-card .job-label { font-size: 11px; margin-top: 2px; color: #6b7a8d; }
+        .job-card .job-score { font-size: 20px; font-weight: bold; }
+        .qa-item { margin-bottom: 12px; padding: 10px; background: #ffffff; border-radius: 8px; font-size: 14px; line-height: 1.6; border-left: 3px solid #3b7cff; }
+        .verdict-box { font-size: 14px; line-height: 1.8; }
+        .verdict-box .verdict-title { font-weight: 600; font-size: 16px; margin-bottom: 10px; }
+        .verdict-box ul { margin-top: 8px; padding-left: 20px; color: #2c3e50; }
+        .verdict-box li { margin-bottom: 4px; }
+        #radarCanvas { display: block; margin: 0 auto; max-width: 100%; background: transparent; }
+        .dim-color-O { color: #4ecdc4; }
+        .dim-color-C { color: #ffeaa7; }
+        .dim-color-E { color: #fd79a8; }
+        .dim-color-A { color: #55efc4; }
+        .dim-color-N { color: #74b9ff; }
     </style>
 </head>
 <body>
@@ -126,8 +149,8 @@
     <script>
         // ===================== 配置 Supabase =====================
         // 🔴 请将下面的 URL 和 anon 密钥替换为你自己的 Supabase 项目值
-        const SUPABASE_URL = 'https://baapafvkictafswvltlz.supabase.co';   // 例如：https://abcdefg.supabase.co
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYXBhZnZraWN0YWZzd3ZsdGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjQ2NjksImV4cCI6MjEwMzcwMDY2OX0._P8E24ilqzsO-8rISV436jSvskHBRoQqfTA102Vrecs';   // 例如：eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        const SUPABASE_URL = 'https://baapafvkictafswvltlz.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJhYXBhZnZraWN0YWZzd3ZsdGx6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgxMjQ2NjksImV4cCI6MjEwMzcwMDY2OX0._P8E24ilqzsO-8rISV436jSvskHBRoQqfTA102Vrecs';
 
         // ===================== 静态数据定义 =====================
         const ADMIN_PASSWORD = '88192283';
@@ -226,17 +249,7 @@
             [4,9],[14,19],[24,29],[34,39],[44,49],
             [5,10],[15,20],[25,30],[35,40],[45,50]
         ];
-        const JOB_DB = [
-            { name: '销售代表', category: '市场类', e: 5, a: 4, c: 3, n: 4, o: 3 },
-            { name: '跟单员', category: '市场类', e: 3, a: 4, c: 4, n: 4, o: 3 },
-            { name: '会计', category: '财务类', e: 2, a: 3, c: 5, n: 5, o: 2 },
-            { name: '设计研发', category: '研发类', e: 3, a: 3, c: 3, n: 3, o: 5 },
-            { name: '工艺', category: '质量/工艺类', e: 3, a: 3, c: 4, n: 4, o: 4 },
-            { name: '品控', category: '质量/工艺类', e: 2, a: 3, c: 5, n: 4, o: 2 },
-            { name: '行政人事', category: '职能支持类', e: 3, a: 5, c: 4, n: 4, o: 3 },
-            { name: '采购', category: '职能支持类', e: 4, a: 4, c: 4, n: 4, o: 3 },
-            { name: '生产计划', category: '职能支持类', e: 3, a: 3, c: 5, n: 4, o: 3 }
-        ];
+
         // ===================== 工具函数 =====================
         function getDimItems(dim) { return QUESTIONS.filter(q=>q.dim===dim); }
         function calcScores(answers) {
@@ -253,7 +266,15 @@
             }
             return {scores, levels, raw};
         }
-        function getTypeKey(levels) { let key=''; for(let d of DIM_KEYS) key+=(levels[d]==='高'?'H':'L'); return key; }
+        function getTypeKey(levels) {
+            let key='';
+            for(let d of DIM_KEYS) {
+                if(levels[d]==='高') key+='H';
+                else if(levels[d]==='中') key+='M';
+                else key+='L';
+            }
+            return key;
+        }
         function getTypeName(key) {
             for(let [k,v] of Object.entries(TYPE_MAP)) if(k.replace(/\s/g,'')===key) return v;
             for(let [k,v] of Object.entries(TYPE_MAP)) {
@@ -291,32 +312,254 @@
             if (extremeCount > 30) issues.push({ type: '极端社会赞许性', detail: `选"非常不符合(1)"或"非常符合(5)"共 ${extremeCount} 题（>30），可能存在刻意美化或贬低。` });
             return issues;
         }
-        function getJobRecommendations(typeKey) {
-            const dims = typeKey.split('').map(ch => ch === 'H');
-            const dimNames = ['e','a','c','n','o'];
-            let scored = JOB_DB.map(job => {
-                let score = 0;
-                for (let i=0; i<5; i++) {
-                    const isHigh = dims[i];
-                    const jobVal = job[dimNames[i]] || 3;
-                    if (isHigh) score += jobVal * 2;
-                    else score += (6 - jobVal) * 2;
+
+        // ===================== 新增制造企业分析函数（从新附件移植） =====================
+        function normCDF(z) {
+            return 0.5 * (1 + Math.tanh(z * Math.sqrt(2 / Math.PI) * (1 + 0.044715 * z * z)));
+        }
+        function calcPercentile(raw) {
+            const z = (raw - 30) / 7;
+            return Math.round(normCDF(z) * 100);
+        }
+        function getLevel(raw) {
+            if (raw >= 40) return {label: '★优秀', color: '#00b894'};
+            if (raw >= 30) return {label: '✓达标', color: '#74b9ff'};
+            if (raw >= 20) return {label: '△警戒', color: '#fdcb6e'};
+            return {label: '✗红灯', color: '#ff6b6b'};
+        }
+        function generateCoreTraits(scores) {
+            let traits = [], risks = [];
+            if (scores.C >= 35) traits.push('<span style="color: #00b894;">✓ 高尽责</span>——自律可靠，执行力强');
+            else if (scores.C < 25) risks.push('<span style="color: #ff6b6b;">✗ 低尽责</span>——散漫拖延，是核心风险点');
+            if (scores.E >= 35) traits.push('<span style="color: #00b894;">✓ 偏外向</span>——善于沟通，能主动推进');
+            else if (scores.E < 20) risks.push('<span style="color: #ff6b6b;">✗ 极度内向</span>——社交回避，团队协作困难');
+            else if (scores.E < 25) traits.push('<span style="color: #fdcb6e;">△ 偏内向</span>——安静专注，但需适配岗位');
+            if (scores.N <= 25) traits.push('<span style="color: #00b894;">✓ 情绪稳定</span>——抗压能力强，危机中冷静');
+            else if (scores.N >= 35) risks.push('<span style="color: #ff6b6b;">✗ 情绪敏感</span>——易焦虑，高压环境风险高');
+            if (scores.A >= 38) traits.push('<span style="color: #00b894;">✓ 高宜人性</span>——合作性好，同理心强');
+            else if (scores.A < 25) risks.push('<span style="color: #ff6b6b;">✗ 低宜人性</span>——对抗性强，团队冲突风险');
+            if (scores.O >= 35) traits.push('<span style="color: #00b894;">✓ 高开放</span>——好奇心强，接受新方法');
+            else if (scores.O < 20) traits.push('<span style="color: #fdcb6e;">△ 偏保守</span>——偏好传统，创新动力不足');
+
+            let html = '';
+            if (traits.length > 0) html += '<div style="margin-bottom: 12px;"><strong style="color: #3b7cff;">核心优势：</strong></div>' + traits.map(t => '<div style="margin-bottom: 6px; padding-left: 10px;">' + t + '</div>').join('');
+            if (risks.length > 0) html += '<div style="margin: 15px 0 12px;"><strong style="color: #ff6b6b;">风险警示：</strong></div>' + risks.map(r => '<div style="margin-bottom: 6px; padding-left: 10px;">' + r + '</div>').join('');
+            if (traits.length === 0 && risks.length === 0) html = '五个维度均处于中等水平，属于<strong style="color: #74b9ff;">"平衡型"</strong>人格。没有明显短板，但也没有突出优势，适合需要多角色切换的综合岗位。';
+            return html;
+        }
+        function generateJobMatches(scores) {
+            const jobs = [
+                { name: '工艺/品质/设备', icon: '⚙️', desc: 'SOP执行、质量管控、设备维护', weights: {C:0.40, N:0.22, A:0.15, O:0.13, E:0.10}, ideal: {C:42, N:22, A:28, O:30, E:24}, redFlag: scores.C < 32 || scores.N > 35 },
+                { name: '财务/会计', icon: '💰', desc: '成本核算、税务合规、月末结账', weights: {C:0.42, N:0.20, A:0.15, O:0.13, E:0.10}, ideal: {C:42, N:20, A:26, O:24, E:22}, redFlag: scores.C < 30 },
+                { name: '人力/行政', icon: '📋', desc: '员工关系、制度执行、安全考勤', weights: {C:0.30, A:0.25, E:0.20, N:0.15, O:0.10}, ideal: {C:36, A:35, E:30, N:25, O:28}, redFlag: scores.C < 25 || scores.A < 22 },
+                { name: '销售/商务', icon: '🤝', desc: 'B2B客户开发、长周期跟进、技术销售', weights: {E:0.28, C:0.25, A:0.18, N:0.17, O:0.12}, ideal: {E:38, C:36, A:30, N:22, O:28}, redFlag: scores.E < 22 || scores.C < 25 },
+                { name: '采购', icon: '📦', desc: '供应商谈判、交期跟进、成本控制', weights: {C:0.28, E:0.25, A:0.20, N:0.15, O:0.12}, ideal: {C:36, E:34, A:32, N:24, O:28}, redFlag: scores.C < 25 || scores.E < 22 || scores.A < 22 },
+                { name: '技术研发/程序员', icon: '💻', desc: '产品开发、工艺改进、技术文档', weights: {O:0.30, C:0.28, N:0.18, E:0.12, A:0.12}, ideal: {O:38, C:38, N:24, E:24, A:26}, redFlag: scores.C < 28 || scores.O < 22 }
+            ];
+            let results = jobs.map(job => {
+                let score = 0, maxScore = 0;
+                for (let d in job.weights) {
+                    const diff = Math.abs(scores[d] - job.ideal[d]);
+                    const match = Math.max(0, 1 - diff / 30);
+                    score += match * job.weights[d];
+                    maxScore += job.weights[d];
                 }
-                return { name: job.name, category: job.category, score: score };
+                let pct = Math.round((score / maxScore) * 100);
+                if (job.redFlag) pct = Math.round(pct * 0.6);
+                return {...job, match: pct};
             });
-            scored.sort((a,b) => b.score - a.score);
-            const recommended = scored.slice(0,3);
-            const notRecommended = scored.slice(-2).reverse();
-            return { recommended, notRecommended };
+            results.sort((a,b) => b.match - a.match);
+            let html = '';
+            results.forEach(r => {
+                const color = r.match >= 75 ? '#00b894' : r.match >= 60 ? '#74b9ff' : r.match >= 45 ? '#fdcb6e' : '#ff6b6b';
+                const label = r.match >= 75 ? '高度匹配' : r.match >= 60 ? '基本匹配' : r.match >= 45 ? '条件匹配' : '匹配度低';
+                const warning = r.redFlag ? ' <span style="color:#ff6b6b;font-size:11px;">(触及红灯线)</span>' : '';
+                html += `<div class="job-card" style="border-color: ${color};">
+                    <span class="job-icon">${r.icon}</span>
+                    <div class="job-info">
+                        <div class="job-name">${r.name}${warning}</div>
+                        <div class="job-label">${r.desc}</div>
+                        <div class="job-label" style="color:${color};font-weight:500;">${label}</div>
+                    </div>
+                    <div class="job-score" style="color:${color};">${r.match}%</div>
+                </div>`;
+            });
+            return html;
+        }
+        function generateInterviewQuestions(scores) {
+            let questions = [];
+            questions.push('<strong style="color: #fdcb6e;">【制造通用】</strong>"请描述一次你参与跨部门协作的经历，在制造型企业中，生产、品质、技术部门之间常有摩擦，你如何处理？"');
+            if (scores.C >= 40) questions.push('<strong style="color: #fdcb6e;">验证高尽责：</strong>"制造企业强调SOP和标准化，请举例说明你如何确保自己负责的工作零差错或接近零差错？"');
+            else if (scores.C < 25) questions.push('<strong style="color: #fdcb6e;">验证低尽责：</strong>"制造企业的生产计划、质量记录都有严格的时间节点，请描述一次你差点延误的经历，以及后续补救措施。"');
+            if (scores.E >= 35) questions.push('<strong style="color: #fd79a8;">验证外向性：</strong>"在制造企业中，你需要频繁与生产一线、供应商、客户沟通。请举例说明你如何快速与一个陌生群体建立工作关系。"');
+            else if (scores.E < 20) questions.push('<strong style="color: #fd79a8;">验证极度内向：</strong>"制造企业的很多信息需要通过走动、口头沟通获取。当必须下车间、参加跨部门会议时，你的真实感受和应对方式是什么？"');
+            else if (scores.E < 28) questions.push('<strong style="color: #fd79a8;">验证偏内向：</strong>"你更喜欢书面沟通还是面对面沟通？在制造企业中，很多紧急问题需要当面快速解决，你如何适应？"');
+            if (scores.N >= 35) questions.push('<strong style="color: #74b9ff;">验证情绪敏感：</strong>"制造企业常有突发状况：设备故障、客户投诉、交货延期。请描述最近一次让你感到压力山大的工作场景，以及你的情绪反应和恢复过程。"');
+            else if (scores.N <= 22) questions.push('<strong style="color: #74b9ff;">验证情绪稳定：</strong>"当生产线突然停机、客户催货、上级施压同时发生时，你的第一反应是什么？请具体描述你的处理步骤。"');
+            if (scores.A >= 40) questions.push('<strong style="color: #55efc4;">验证高宜人性：</strong>"制造企业中，生产部门追求效率，品质部门追求零缺陷，两者常有冲突。当生产主管和品质主管在你面前争执时，你会怎么做？"');
+            else if (scores.A < 25) questions.push('<strong style="color: #55efc4;">验证低宜人性：</strong>"请描述一次你在工作中坚持原则、即使得罪人也要执行的经历。在制造企业中，安全和质量红线不能妥协。"');
+            if (scores.O >= 35) questions.push('<strong style="color: #4ecdc4;">验证开放性：</strong>"制造企业常需要工艺改进、降本增效。请举例说明你主动提出并推动实施的一项改进建议。"');
+            else if (scores.O < 22) questions.push('<strong style="color: #4ecdc4;">验证保守性：</strong>"当公司推行新的ERP系统或新的生产工艺时，你的第一反应是什么？你如何平衡守规矩和接受变化？"');
+            if (questions.length === 1) questions.push('<strong style="color: #b2bec3;">全中均衡型：</strong>"你认为自己最大的优势是什么？在制造企业的多部门协作环境中，这个优势如何发挥？"');
+            return questions.map(q => '<div class="qa-item">' + q + '</div>').join('');
+        }
+        function generateVerdict(scores) {
+            let riskCount = 0, riskDetails = [];
+            if (scores.C < 25) { riskCount++; riskDetails.push('尽责性过低（C<25），制造企业任何岗位都无法容忍散漫'); }
+            if (scores.E < 20) { riskCount++; riskDetails.push('极度内向（E<20），制造企业需要基本沟通能力'); }
+            if (scores.N >= 40) { riskCount++; riskDetails.push('情绪极不稳定（N≥40），制造现场突发状况多，易崩溃'); }
+            if (scores.A < 20) { riskCount++; riskDetails.push('宜人性过低（A<20），制造企业的跨部门协作难以开展'); }
+            if (scores.C < 30 && scores.E < 25) { riskCount++; riskDetails.push('尽责性和外向性同时不足，无法胜任任何制造岗位'); }
+            if (riskCount >= 2) {
+                return `<div class="verdict-box">
+                    <div class="verdict-title" style="color: #ff6b6b;">🔴 高风险 — 建议谨慎录用或不录用</div>
+                    <div>该候选人存在<strong>${riskCount}个红灯维度</strong>，与制造型企业岗位要求存在明显冲突：</div>
+                    <ul>${riskDetails.map(d => '<li>' + d + '</li>').join('')}</ul>
+                    <div>制造企业强调<strong>标准化、执行力、跨部门协作</strong>，任何一项严重短板都可能导致生产事故或团队摩擦。如确需录用，必须：</div>
+                    <ul>
+                        <li>面试重点验证红灯维度的实际表现（行为面试法）</li>
+                        <li>确认是否具备极强的专业技能作为补偿</li>
+                        <li>评估团队现有成员是否能覆盖其短板</li>
+                        <li>设置3个月试用期，从一线岗位开始观察</li>
+                        <li>制造企业的工艺/品质/安全岗位<strong>绝对不可录用</strong>红灯候选人</li>
+                    </ul>
+                </div>`;
+            } else if (scores.C >= 35 && scores.N <= 28) {
+                return `<div class="verdict-box">
+                    <div class="verdict-title" style="color: #00b894;">🟢 低风险 — 推荐优先录用</div>
+                    <div>该候选人具备制造型企业最看重的<strong>两大核心素质</strong>：高尽责性（C≥35）+ 情绪稳定（N≤28）。这是跨岗位最强的人格预测组合，尤其在制造环境中：</div>
+                    <ul>
+                        <li>高C = 能严格执行SOP、按时完成生产任务、质量记录准确无误</li>
+                        <li>低N = 面对设备故障、客户投诉、交货压力不慌乱</li>
+                    </ul>
+                    <div>建议：</div>
+                    <ul>
+                        <li>根据岗位匹配排序，安排到最适合的具体岗位</li>
+                        <li>面试重点验证专业技能和制造业经验</li>
+                        <li>可作为<strong>工艺/品质/设备岗</strong>或<strong>管理储备</strong>重点培养</li>
+                    </ul>
+                </div>`;
+            } else {
+                return `<div class="verdict-box">
+                    <div class="verdict-title" style="color: #fdcb6e;">🟡 中等风险 — 定向录用</div>
+                    <div>该候选人<strong>没有致命短板</strong>，但存在需要关注的维度。在制造型企业中：</div>
+                    <ul>
+                        <li>根据岗位匹配分析，选择匹配度≥60%的岗位</li>
+                        <li>面试中针对警戒维度进行<strong>制造场景</strong>行为验证</li>
+                        <li>避免安排到与短板直接冲突的工作内容（如低C不做品质、高N不做设备抢修）</li>
+                        <li>入职后提供针对性辅导，并安排导师带教</li>
+                        <li>制造企业的<strong>工艺/品质/安全岗位</strong>对人格要求最严格，需特别谨慎</li>
+                    </ul>
+                </div>`;
+            }
+        }
+        // 雷达图绘制（移植自新附件）
+        function drawRadar(canvas, scores) {
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            const cx = w / 2, cy = h / 2 + 10;
+            const radius = 140;
+            const dims = ['E','A','C','N','O'];
+            const dimNames = ['外向性','宜人性','尽责性','神经质','开放性'];
+            const colors = ['#fd79a8','#55efc4','#ffeaa7','#74b9ff','#4ecdc4'];
+            ctx.clearRect(0,0,w,h);
+
+            // 网格
+            for (let i=1; i<=5; i++) {
+                const r = (radius/5)*i;
+                ctx.beginPath();
+                for (let j=0; j<5; j++) {
+                    const angle = (Math.PI*2/5)*j - Math.PI/2;
+                    const x = cx + r*Math.cos(angle);
+                    const y = cy + r*Math.sin(angle);
+                    if (j===0) ctx.moveTo(x,y);
+                    else ctx.lineTo(x,y);
+                }
+                ctx.closePath();
+                ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+                ctx.stroke();
+                const labelAngle = -Math.PI/2;
+                ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                ctx.font = '10px sans-serif';
+                ctx.fillText((i*10).toString(), cx + r*Math.cos(labelAngle)+5, cy + r*Math.sin(labelAngle));
+            }
+            // 轴线与标签
+            for (let j=0; j<5; j++) {
+                const angle = (Math.PI*2/5)*j - Math.PI/2;
+                ctx.beginPath();
+                ctx.moveTo(cx,cy);
+                ctx.lineTo(cx + radius*Math.cos(angle), cy + radius*Math.sin(angle));
+                ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                ctx.stroke();
+                const lr = radius + 25;
+                ctx.fillStyle = colors[j];
+                ctx.font = 'bold 13px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(dimNames[j], cx + lr*Math.cos(angle), cy + lr*Math.sin(angle));
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(dims[j], cx + lr*Math.cos(angle), cy + lr*Math.sin(angle)+14);
+            }
+            // 30分参考线
+            ctx.beginPath();
+            for (let j=0; j<5; j++) {
+                const angle = (Math.PI*2/5)*j - Math.PI/2;
+                const r = (30/50)*radius;
+                const x = cx + r*Math.cos(angle);
+                const y = cy + r*Math.sin(angle);
+                if (j===0) ctx.moveTo(x,y);
+                else ctx.lineTo(x,y);
+            }
+            ctx.closePath();
+            ctx.strokeStyle = 'rgba(0,0,0,0.2)';
+            ctx.setLineDash([5,5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            // 数据区域
+            ctx.beginPath();
+            for (let j=0; j<5; j++) {
+                const angle = (Math.PI*2/5)*j - Math.PI/2;
+                const val = scores[dims[j]];
+                const r = ((val-10)/40)*radius;
+                const x = cx + r*Math.cos(angle);
+                const y = cy + r*Math.sin(angle);
+                if (j===0) ctx.moveTo(x,y);
+                else ctx.lineTo(x,y);
+            }
+            ctx.closePath();
+            ctx.fillStyle = 'rgba(0, 212, 255, 0.15)';
+            ctx.fill();
+            ctx.strokeStyle = '#00d4ff';
+            ctx.lineWidth = 2.5;
+            ctx.stroke();
+            // 数据点
+            for (let j=0; j<5; j++) {
+                const angle = (Math.PI*2/5)*j - Math.PI/2;
+                const val = scores[dims[j]];
+                const r = ((val-10)/40)*radius;
+                const x = cx + r*Math.cos(angle);
+                const y = cy + r*Math.sin(angle);
+                ctx.beginPath();
+                ctx.arc(x,y,5,0,Math.PI*2);
+                ctx.fillStyle = colors[j];
+                ctx.fill();
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 11px sans-serif';
+                ctx.textAlign = 'center';
+                const tx = cx + (r+15)*Math.cos(angle);
+                const ty = cy + (r+15)*Math.sin(angle);
+                ctx.fillText(val.toString(), tx, ty);
+            }
         }
 
         // ===================== Supabase 客户端初始化 =====================
         let supabaseClient = null;
         function initSupabase() {
-            if (typeof supabase === 'undefined') {
-                console.warn('Supabase JS 库未加载，等待中...');
-                return false;
-            }
+            if (typeof supabase === 'undefined') return false;
             const { createClient } = supabase;
             supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('Supabase 客户端初始化成功');
@@ -389,7 +632,7 @@
             } catch (e) { alert('删除出错'); }
         }
 
-        // ===================== 页面状态 =====================
+        // ===================== 页面状态与渲染 =====================
         const pageTest = document.getElementById('page-test');
         const pageSuccess = document.getElementById('page-success');
         const pageAdmin = document.getElementById('page-admin');
@@ -425,7 +668,7 @@
             return html;
         }
 
-        // ===================== 渲染函数 =====================
+        // 测试页面渲染（与之前一致）
         function renderTest() {
             pageTest.classList.remove('hidden');
             pageSuccess.classList.add('hidden');
@@ -549,7 +792,7 @@
             }
         };
 
-        // ===================== 提交与成功 =====================
+        // 提交（异步）
         async function submitTest() {
             if (state.submitted) return;
             if (!state.answers.every(a=>a!==null)) { alert('请完成所有题目'); return; }
@@ -726,8 +969,9 @@
             renderDetail(record);
         };
 
+        // ===================== 核心：详情页渲染（集成制造企业报告 + 保留质量检测） =====================
         function renderDetail(record) {
-            // 由于数据字段名与之前略有不同（下划线分隔），需适配
+            // 提取数据（字段映射）
             let scores = record.scores || {};
             let levels = record.levels || {};
             let typeKey = record.type_key || '';
@@ -742,51 +986,64 @@
             let middleCount = record.middle_count || 0;
             let qualityIssues = record.quality_issues || [];
 
-            let dimOrder=['E','A','C','N','O'];
-            let dimLabels={E:'外向性',A:'宜人性',C:'尽责性',N:'情绪稳定性',O:'开放性'};
-            let jobRec = getJobRecommendations(typeKey);
+            // 维度顺序
+            const dimOrder = ['E','A','C','N','O'];
+            const dimLabels = {E:'外向性', A:'宜人性', C:'尽责性', N:'情绪稳定性', O:'开放性'};
+            const dimDescs = {E:'社交能量、活跃、自信', A:'合作、同理心、利他', C:'自律、可靠、目标导向', N:'情绪敏感、焦虑、压力反应', O:'好奇心、创新、接受新事物'};
+            const dimColors = {O:'#4ecdc4', C:'#ffeaa7', E:'#fd79a8', A:'#55efc4', N:'#74b9ff'};
 
-            let fastQuestions=[];
+            // ---- 计算秒选题（阈值改为 2 秒） ----
+            let fastQuestions = [];
             let details = answersDetail || QUESTIONS.map((q,i)=>({questionId:q.id, score:answers?answers[i]:'-', duration:answerDurations?answerDurations[i]:0}));
             for (let d of details) {
-                if (d.duration!==undefined && d.duration<3000 && d.duration>0) fastQuestions.push(d.questionId);
+                if (d.duration !== undefined && d.duration < 2000 && d.duration > 0) {
+                    fastQuestions.push(d.questionId);
+                }
             }
             let totalDur=0, validCount=0;
             for (let d of details) {
-                if (d.duration!==undefined && d.duration>0) { totalDur+=d.duration; validCount++; }
+                if (d.duration !== undefined && d.duration > 0) { totalDur += d.duration; validCount++; }
             }
-            let avgDur = validCount>0 ? (totalDur/validCount/1000).toFixed(1) : 0;
+            let avgDur = validCount > 0 ? (totalDur / validCount / 1000).toFixed(1) : 0;
             let birthDisplay = birth ? formatBirth(birth) : '未提供';
 
-            let cons = consistency||{passed:0,total:0};
-            let passRate = cons.total ? Math.round(cons.passed/cons.total*100) : 0;
-            let hasAbnormal = (qualityIssues && qualityIssues.length > 0) || (passRate < 60) || (fastQuestions.length > 0) || (middleCount > 15);
+            // ---- 一致性数据 ----
+            let cons = consistency || {passed:0, total:0};
+            let passRate = cons.total ? Math.round(cons.passed / cons.total * 100) : 0;
 
-            let jobHtml = '';
-            let warningMsg = hasAbnormal ? `<div class="warning-msg">⚠️ 注意：您的作答存在异常（一致性偏低、秒选、中性过多等），以下岗位建议仅供参考，可信度可能受到影响。</div>` : '';
-            let recommended = jobRec.recommended;
-            let notRecommended = jobRec.notRecommended;
-            jobHtml = `
-                <div class="job-recommend">
-                    ${warningMsg}
-                    <div style="margin-bottom:10px;">
-                        <div class="job-title" style="color:#1a5a2a;">✅ 适合岗位</div>
-                        <div class="job-list">
-                            ${recommended.map(j => `<span class="tag good">${j.category}·${j.name}</span>`).join('')}
-                        </div>
-                        <div class="job-desc">上述岗位与您的特质匹配度较高，可优先考虑。</div>
-                    </div>
-                    <div>
-                        <div class="job-title" style="color:#a51a1a;">❌ 不适合岗位</div>
-                        <div class="job-list">
-                            ${notRecommended.map(j => `<span class="tag bad">${j.category}·${j.name}</span>`).join('')}
-                        </div>
-                        <div class="job-desc">上述岗位与您的特质匹配度较低，建议慎重考虑。</div>
-                    </div>
-                </div>
-            `;
+            // ---- 生成综合报告内容 ----
+            // 1. 雷达图（需要 Canvas）
+            const canvasId = 'radarCanvas-' + Math.random().toString(36).slice(2,8);
+            // 2. 维度详情表
+            let tableRows = '';
+            dimOrder.forEach(d => {
+                let raw = scores[d] || 0;
+                let p = calcPercentile(raw);
+                let level = getLevel(raw);
+                let comment = getDimComment(d, raw);
+                tableRows += `<tr>
+                    <td><div class="dim-name">${dimLabels[d]}</div><div class="dim-desc">${dimDescs[d]}</div></td>
+                    <td class="score-val">${raw}</td>
+                    <td style="text-align:center;">${p}%</td>
+                    <td class="level-tag" style="color:${level.color};">${level.label}</td>
+                    <td class="comment">${comment}</td>
+                </tr>`;
+            });
 
-            let html=`
+            // 3. 核心特质
+            let coreTraitsHtml = generateCoreTraits(scores);
+
+            // 4. 岗位匹配
+            let jobMatchesHtml = generateJobMatches(scores);
+
+            // 5. 面试追问
+            let interviewHtml = generateInterviewQuestions(scores);
+
+            // 6. 录用建议
+            let verdictHtml = generateVerdict(scores);
+
+            // ---- 构建最终 HTML（先展示报告，后展示质量检测警告） ----
+            let html = `
                 <div class="header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
                     <div><h1>📄 详细结果</h1><div class="sub">${name} · 出生: ${birthDisplay} · ${new Date(created_at).toLocaleString()}</div></div>
                     <button class="btn btn-secondary" onclick="showAdminDashboard()" style="width:auto;padding:8px 20px;font-size:14px;">← 返回列表</button>
@@ -795,46 +1052,86 @@
                     <span class="type-badge" style="font-size:20px;">${typeKey}</span>
                     <div class="type-desc">${typeName}</div>
                 </div>
-                ${jobHtml}
-                <div class="result-grid">
+                <!-- 雷达图 -->
+                <div class="report-section">
+                    <h3 style="text-align:center;">📊 人格雷达图</h3>
+                    <canvas id="${canvasId}" width="500" height="400" style="display:block; margin:0 auto; max-width:100%;"></canvas>
+                </div>
+                <!-- 维度详情 -->
+                <div class="report-section">
+                    <h3>📋 维度得分详情</h3>
+                    <table class="score-table">
+                        <thead>
+                            <tr>
+                                <th>维度</th>
+                                <th style="text-align:center;">原始分</th>
+                                <th style="text-align:center;">百分位</th>
+                                <th style="text-align:center;">等级</th>
+                                <th>解读</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                </div>
+                <!-- 核心特质 -->
+                <div class="report-section">
+                    <h3>🎯 核心人格特征</h3>
+                    <div style="font-size:14px; line-height:1.8; color:#1a2332;">${coreTraitsHtml}</div>
+                </div>
+                <!-- 岗位匹配 -->
+                <div class="report-section">
+                    <h3>💼 制造型企业岗位匹配分析</h3>
+                    <div id="job-matches-container">${jobMatchesHtml}</div>
+                </div>
+                <!-- 面试追问 -->
+                <div class="report-section">
+                    <h3>🎤 面试追问建议（制造场景）</h3>
+                    <div>${interviewHtml}</div>
+                </div>
+                <!-- 录用建议 -->
+                <div class="report-section">
+                    <h3>📌 综合录用建议</h3>
+                    <div>${verdictHtml}</div>
+                </div>
             `;
-            for (let d of dimOrder) {
-                let s=scores[d], lv=levels[d];
-                let lvClass=lv==='高'?'level-high':lv==='中'?'level-mid':'level-low';
-                html+=`<div class="result-item"><div class="dim">${dimLabels[d]}</div><div class="score">${s}</div><div class="level ${lvClass}">${lv}</div></div>`;
-            }
-            html+=`</div>`;
 
-            if (passRate<70) {
-                html+=`<div class="consistency-warn"><strong>⚠️ 一致性偏低 (通过率：${passRate}%，${cons.passed}/${cons.total})</strong><br>`;
-                if (middleCount>10) html+=`🔸 中性回答 (3分) 共 ${middleCount} 次，可能影响结果区分度。<br>`;
-                let conflictItems=[];
+            // ---- 质量检测警告（保留原有功能） ----
+            let qualityWarnings = '';
+            // 一致性警告
+            if (passRate < 70) {
+                qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 一致性偏低 (通过率：${passRate}%，${cons.passed}/${cons.total})</strong><br>`;
+                if (middleCount > 10) qualityWarnings += `🔸 中性回答 (3分) 共 ${middleCount} 次，可能影响结果区分度。<br>`;
+                let conflictItems = [];
                 for (let item of (cons.details||[])) { if (!item.ok) conflictItems.push(`第${item.q1}题与第${item.q2}题`); }
-                if (conflictItems.length>0) html+=`🔸 存在矛盾配对：${conflictItems.join('、')}`;
-                html+=`</div>`;
-            } else if (middleCount>10) {
-                html+=`<div class="consistency-warn"><strong>⚠️ 中性回答较多 (通过率：${passRate}%)</strong><br>您选择了 ${middleCount} 次"一般"，可能导致结果趋于居中。</div>`;
+                if (conflictItems.length > 0) qualityWarnings += `🔸 存在矛盾配对：${conflictItems.join('、')}`;
+                qualityWarnings += `</div>`;
+            } else if (middleCount > 10) {
+                qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 中性回答较多 (通过率：${passRate}%)</strong><br>您选择了 ${middleCount} 次"一般"，可能导致结果趋于居中。</div>`;
             } else {
-                html+=`<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
+                qualityWarnings += `<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
             }
-
-            if (fastQuestions.length>0) {
-                let qList=fastQuestions.join('、');
-                html+=`<div class="warning-box"><strong>⚠️ 秒选警告</strong><br>🚨 以下题目答题耗时过短（<3秒），可能存在秒选：<strong>第${qList}题</strong><br>📊 平均每题耗时：<strong>${avgDur} 秒</strong>（正常参考值：5-10秒/题）</div>`;
+            // 秒选警告（阈值2秒）
+            if (fastQuestions.length > 0) {
+                let qList = fastQuestions.join('、');
+                qualityWarnings += `<div class="warning-box"><strong>⚠️ 秒选警告</strong><br>🚨 以下题目答题耗时过短（<2秒），可能存在秒选：<strong>第${qList}题</strong><br>📊 平均每题耗时：<strong>${avgDur} 秒</strong>（正常参考值：5-10秒/题）</div>`;
             }
-
+            // 作答质量异常
             let issues = qualityIssues || [];
-            if (issues.length>0) {
-                html+=`<div class="quality-summary"><h3>📌 作答质量异常检测</h3><ul>`;
+            if (issues.length > 0) {
+                qualityWarnings += `<div class="quality-summary"><h3>📌 作答质量异常检测</h3><ul>`;
                 for (let issue of issues) {
-                    html+=`<li><span class="quality-fail">❌ ${issue.type}</span>：${issue.detail}</li>`;
+                    qualityWarnings += `<li><span class="quality-fail">❌ ${issue.type}</span>：${issue.detail}</li>`;
                 }
-                html+=`</ul></div>`;
+                qualityWarnings += `</ul></div>`;
             } else {
-                html+=`<div class="quality-summary" style="border-color:#c3e6cb; background:#d4edda;"><h3 style="color:#155724;">✅ 作答质量良好</h3><p style="margin:0;font-size:14px;">未检测到直线作答、规律性点选或极端社会赞许性等异常。</p></div>`;
+                qualityWarnings += `<div class="quality-summary" style="border-color:#c3e6cb; background:#d4edda;"><h3 style="color:#155724;">✅ 作答质量良好</h3><p style="margin:0;font-size:14px;">未检测到直线作答、规律性点选或极端社会赞许性等异常。</p></div>`;
             }
 
-            html+=`
+            // 将质量警告追加到报告之后
+            html += `<div class="report-section"><h3>🔍 数据质量检测</h3>${qualityWarnings}</div>`;
+
+            // ---- 答题详情表格（保留） ----
+            html += `
                 <div style="margin-top:16px;">
                     <button class="btn btn-secondary" onclick="toggleDetailAnswers()" style="width:auto;padding:8px 20px;font-size:14px;">📋 查看全部答题（含耗时）</button>
                     <div id="detail-answers-wrap" style="display:none;margin-top:12px;max-height:500px;overflow-y:auto;background:#f8fafd;border-radius:16px;padding:16px;">
@@ -847,7 +1144,7 @@
                 let dur=detail.duration||0;
                 let seconds=(dur/1000).toFixed(1);
                 let bg=val===3?'background:#fff4e0;':'';
-                if (dur>0 && dur<3000) bg='background:#ffe0e0 !important;';
+                if (dur>0 && dur<2000) bg='background:#ffe0e0 !important;'; // 秒选标红（阈值2秒）
                 html+=`<tr style="${bg}">
                     <td style="padding:3px 6px;">${q.id}</td>
                     <td style="padding:3px 6px;">${q.text}</td>
@@ -856,15 +1153,35 @@
                     <td style="text-align:center;padding:3px 6px;font-size:12px;color:#6b7a8d;">${q.dim}</td>
                 </tr>`;
             }
-            html+=`</table></div></div>`;
-            pageAdminDetail.innerHTML=html;
+            html += `</table></div></div>`;
+
+            pageAdminDetail.innerHTML = html;
+
+            // ---- 渲染雷达图 ----
+            setTimeout(() => {
+                const canvas = document.getElementById(canvasId);
+                if (canvas) drawRadar(canvas, scores);
+            }, 100);
+        }
+
+        // 辅助：维度解读
+        function getDimComment(dim, raw) {
+            const comments = {
+                O: raw >= 40 ? '思维活跃，喜欢创新' : raw >= 30 ? '能接受新方法，务实为主' : raw >= 20 ? '偏好传统，守规矩' : '抗拒变化，思维固化',
+                C: raw >= 40 ? '极度自律，执行力强' : raw >= 30 ? '可靠，能按计划推进' : raw >= 20 ? '随性，需外部约束' : '散漫，易拖延出错',
+                E: raw >= 40 ? '社交中心，能量外放' : raw >= 30 ? '能社交也能独处' : raw >= 20 ? '偏安静，小范围沟通' : '极度内向，回避社交',
+                A: raw >= 40 ? '高度合作，同理心强' : raw >= 30 ? '好相处，有原则' : raw >= 20 ? '偏自我，竞争导向' : '对抗性强，难合作',
+                N: raw >= 40 ? '情绪敏感，易焦虑' : raw >= 30 ? '有压力反应，能恢复' : raw >= 20 ? '情绪稳定，抗压尚可' : '处变不惊，情绪免疫'
+            };
+            return comments[dim];
         }
 
         window.toggleDetailAnswers = function() {
-            let wrap=document.getElementById('detail-answers-wrap');
-            if (wrap) wrap.style.display = wrap.style.display==='none'?'block':'none';
+            let wrap = document.getElementById('detail-answers-wrap');
+            if (wrap) wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
         };
 
+        // ===================== 导出数据 =====================
         async function exportData() {
             let records = await getRecords();
             if (!records.length) { alert('暂无数据可导出'); return; }
@@ -890,32 +1207,19 @@
         }
 
         // ===================== 初始化 =====================
-        // 等待 Supabase 库加载完成
-        let supabaseLoaded = false;
-        function waitForSupabase(callback) {
-            if (typeof supabase !== 'undefined') {
-                supabaseLoaded = initSupabase();
-                if (supabaseLoaded) callback();
-                else setTimeout(() => waitForSupabase(callback), 300);
-            } else {
-                setTimeout(() => waitForSupabase(callback), 300);
-            }
-        }
-
-        // 加载 Supabase JS 库
+        // 加载 Supabase 库
         const script = document.createElement('script');
         script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
         document.head.appendChild(script);
         script.onload = function() {
             initSupabase();
-            // 判断后台模式
             if (window.location.search.includes('admin')) {
                 showAdminLogin();
             } else {
                 renderTest();
             }
         };
-        // 如果库加载失败，10秒后尝试直接初始化
+        // 备用：10秒后尝试
         setTimeout(() => {
             if (!supabaseClient && typeof supabase !== 'undefined') {
                 initSupabase();
@@ -927,7 +1231,7 @@
             }
         }, 10000);
 
-        console.log('🧠 个人特质测试已加载 (Supabase 云存储版)');
+        console.log('🧠 个人特质测试已加载 (制造企业版，含雷达图、岗位匹配、质量检测)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
     </script>
 </body>
