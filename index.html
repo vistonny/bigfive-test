@@ -632,7 +632,7 @@
                         该测试仅作为一个描述性了解，不涉及个人录取与否。<br>
                         请根据您近两年的实际表现，而非理想状态，诚实作答。<br><br>
                         选项本身没有“好坏”之分，请根据自己的第一感觉回答，不要过多思考“应该”怎么选。<br>
-                        <span class="red-reminder">提醒：请尽量避免中性选择"3=一般"，以保证结果有效。</span>
+                        <span class="red-reminder">提醒：请尽量避免中性选择"3=不确定"，以保证结果有效。</span>
                     </div>
                     <div class="form-group"><label>姓名</label><input type="text" id="input-name" placeholder="请输入您的姓名" value="${state.name}"></div>
                     <div class="form-group">
@@ -666,7 +666,7 @@
                     <div class="q-text">${q.text}</div>
                     <div class="options">
             `;
-            let labels=['非常不符合','不太符合','一般','比较符合','非常符合'];
+            let labels=['非常不符合','不太符合','不确定','比较符合','非常符合'];
             for (let i=1; i<=5; i++) {
                 let sel=selected===i?'selected':'';
                 html+=`<div class="option-item ${sel}" onclick="selectOption(${i})"><div class="radio-circle"></div><span class="option-label">${labels[i-1]}</span><span class="option-score">${i}</span></div>`;
@@ -1017,7 +1017,7 @@
                 if (conflictItems.length > 0) qualityWarnings += `🔸 存在矛盾配对：${conflictItems.join('、')}`;
                 qualityWarnings += `</div>`;
             } else if (middleCount > 10) {
-                qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 中性回答较多 (通过率：${passRate}%)</strong><br>您选择了 ${middleCount} 次"一般"，可能导致结果趋于居中。</div>`;
+                qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 中性回答较多 (通过率：${passRate}%)</strong><br>您选择了 ${middleCount} 次"不确定"，可能导致结果趋于居中。</div>`;
             } else {
                 qualityWarnings += `<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
             }
