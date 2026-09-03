@@ -205,7 +205,6 @@
         ];
         const DIM_KEYS = ['E','A','C','N','O'];
         const DIM_NAMES = { E:"外向性", A:"宜人性", C:"尽责性", N:"情绪稳定性", O:"开放性" };
-        // TYPE_MAP 已完全移除，类型识别不再使用
         const CONSISTENCY_PAIRS = [
             [1,6],[11,16],[21,26],[31,36],[41,46],
             [2,7],[12,17],[22,27],[32,37],
@@ -230,7 +229,6 @@
             }
             return {scores, levels, raw};
         }
-        // getTypeKey 和 getTypeName 已移除，不再使用
         function checkConsistency(answers) {
             let passed=0, details=[];
             for(let [id1,id2] of CONSISTENCY_PAIRS) {
@@ -524,7 +522,6 @@
                         scores: data.scores,
                         levels: data.levels,
                         raw: data.raw,
-                        // type_key 和 type_name 不再保存
                         consistency: data.consistency,
                         middle_count: data.middleCount,
                         quality_issues: data.qualityIssues
@@ -757,7 +754,6 @@
                 consistency,
                 middleCount,
                 qualityIssues
-                // type_key 和 type_name 不再保存
             };
 
             let inserted = await saveRecord(recordData);
@@ -906,7 +902,7 @@
             renderDetail(record);
         };
 
-        // ===================== 核心：详情页渲染（无类型） =====================
+        // ===================== 核心：详情页渲染（含总耗时评价） =====================
         function renderDetail(record) {
             // 提取数据
             let scores = record.scores || {};
@@ -924,18 +920,20 @@
             const dimLabels = {E:'外向性', A:'宜人性', C:'尽责性', N:'情绪稳定性', O:'开放性'};
             const dimDescs = {E:'社交能量、活跃、自信', A:'合作、同理心、利他', C:'自律、可靠、目标导向', N:'情绪敏感、焦虑、压力反应', O:'好奇心、创新、接受新事物'};
 
-            // 秒选题（阈值2秒）
+            // 秒选题（阈值2秒）和总耗时
             let fastQuestions = [];
             let details = answersDetail || QUESTIONS.map((q,i)=>({questionId:q.id, score:answers?answers[i]:'-', duration:answerDurations?answerDurations[i]:0}));
+            let totalDur = 0, validCount = 0;
             for (let d of details) {
-                if (d.duration !== undefined && d.duration < 2000 && d.duration > 0) {
-                    fastQuestions.push(d.questionId);
+                if (d.duration !== undefined && d.duration > 0) {
+                    totalDur += d.duration;
+                    validCount++;
+                    if (d.duration < 2000) {
+                        fastQuestions.push(d.questionId);
+                    }
                 }
             }
-            let totalDur=0, validCount=0;
-            for (let d of details) {
-                if (d.duration !== undefined && d.duration > 0) { totalDur += d.duration; validCount++; }
-            }
+            let totalSeconds = totalDur / 1000;
             let avgDur = validCount > 0 ? (totalDur / validCount / 1000).toFixed(1) : 0;
             let birthDisplay = birth ? formatBirth(birth) : '未提供';
 
@@ -965,6 +963,18 @@
             let interviewHtml = generateInterviewQuestions(scores);
             let verdictHtml = generateVerdict(scores);
 
+            // ---- 总耗时与节奏评价 ----
+            let timeEval = '';
+            if (totalSeconds < 150) {
+                timeEval = '🚀 答题过快（总耗时 < 2.5分钟），可能存在未认真阅读的情况，建议重测。';
+            } else if (totalSeconds <= 480) {
+                timeEval = '✅ 答题节奏正常（总耗时 2.5~8分钟），符合第一感觉作答的指导要求。';
+            } else {
+                timeEval = '⏳ 答题耗时较长（总耗时 > 8分钟），可能存在过度思考的倾向，建议凭第一感觉作答。';
+            }
+            let timeDisplay = `⏱️ 总耗时：<strong>${totalSeconds.toFixed(1)} 秒</strong>（${Math.floor(totalSeconds/60)} 分钟 ${Math.floor(totalSeconds%60)} 秒）<br>${timeEval}`;
+
+            // ---- 构建HTML ----
             let html = `
                 <div class="header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;">
                     <div><h1>📄 详细结果</h1><div class="sub">${name} · 出生: ${birthDisplay} · ${new Date(created_at).toLocaleString()}</div></div>
@@ -1007,8 +1017,12 @@
                 </div>
             `;
 
-            // ---- 质量检测 ----
+            // ---- 质量检测（包含总耗时） ----
             let qualityWarnings = '';
+            // 总耗时评价
+            qualityWarnings += `<div class="consistency-ok" style="background:#e8f5e9;border-left-color:#2e7d32;">${timeDisplay}</div>`;
+
+            // 一致性警告
             if (passRate < 70) {
                 qualityWarnings += `<div class="consistency-warn"><strong>⚠️ 一致性偏低 (通过率：${passRate}%，${cons.passed}/${cons.total})</strong><br>`;
                 if (middleCount > 10) qualityWarnings += `🔸 中性回答 (3分) 共 ${middleCount} 次，可能影响结果区分度。<br>`;
@@ -1021,10 +1035,12 @@
             } else {
                 qualityWarnings += `<div class="consistency-ok">✅ 一致性良好 (通过率：${passRate}%，${cons.passed}/${cons.total}) · 中性回答 ${middleCount} 次</div>`;
             }
+            // 秒选警告
             if (fastQuestions.length > 0) {
                 let qList = fastQuestions.join('、');
                 qualityWarnings += `<div class="warning-box"><strong>⚠️ 秒选警告</strong><br>🚨 以下题目答题耗时过短（<2秒），可能存在秒选：<strong>第${qList}题</strong><br>📊 平均每题耗时：<strong>${avgDur} 秒</strong>（正常参考值：5-10秒/题）</div>`;
             }
+            // 作答质量异常
             let issues = qualityIssues || [];
             if (issues.length > 0) {
                 qualityWarnings += `<div class="quality-summary"><h3>📌 作答质量异常检测</h3><ul>`;
@@ -1135,7 +1151,7 @@
             }
         }, 10000);
 
-        console.log('🧠 个人特质测试已加载 (无类型显示，仅展示雷达图、岗位匹配、质量检测等)');
+        console.log('🧠 个人特质测试已加载 (含总耗时评价，选项“一般”已改为“不确定”)');
         console.log('📊 后台入口: 在URL后添加 ?admin');
     </script>
 </body>
